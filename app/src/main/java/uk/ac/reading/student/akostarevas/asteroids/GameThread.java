@@ -68,12 +68,14 @@ public abstract class GameThread extends Thread {
 		mGameView = gameView;
 		
 		mSurfaceHolder = gameView.getHolder();
-		mHandler = gameView.getmHandler();
+		mHandler = gameView.mHandler;
 		mContext = gameView.getContext();
-		
+
+		/*
 		mBackgroundImage = BitmapFactory.decodeResource
 							(gameView.getContext().getResources(), 
 							R.drawable.background);
+		*/
 	}
 	
 	/*
@@ -138,7 +140,7 @@ public abstract class GameThread extends Thread {
 			mCanvasHeight = height;
 
 			// don't forget to resize the background image
-			mBackgroundImage = Bitmap.createScaledBitmap(mBackgroundImage, width, height, true);
+			//mBackgroundImage = Bitmap.createScaledBitmap(mBackgroundImage, width, height, true);
 		}
 	}
 
@@ -147,7 +149,7 @@ public abstract class GameThread extends Thread {
 		
 		if(canvas == null) return;
 
-		if(mBackgroundImage != null) canvas.drawBitmap(mBackgroundImage, 0, 0, null);
+		//if(mBackgroundImage != null) canvas.drawBitmap(mBackgroundImage, 0, 0, null);
 	}
 	
 	private void updatePhysics() {

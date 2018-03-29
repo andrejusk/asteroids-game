@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 /**
  * Main activity for Asteroids.
@@ -33,8 +32,9 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         mGameView = findViewById(R.id.gamearea);
-        mGameView.setStatusView((TextView) findViewById(R.id.text));
-        mGameView.setScoreView((TextView) findViewById(R.id.score));
+        mGameView.mStatusView = findViewById(R.id.text);
+        mGameView.mScoreView = findViewById(R.id.score);
+        mGameView.setup();
 
         this.startGame(savedInstanceState);
     }
@@ -47,7 +47,7 @@ public class GameActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     private void startGame(Bundle savedInstanceState) {
         //TODO: savedInstance
-        mGameThread = new TheGame(mGameView);
+        mGameThread = new Game(mGameView);
         mGameView.setThread(mGameThread);
         mGameThread.setState(GameThread.STATE_READY);
     }
