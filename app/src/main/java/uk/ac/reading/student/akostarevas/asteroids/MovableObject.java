@@ -1,6 +1,6 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
-public class MovableObject extends StaticObject {
+class MovableObject extends StaticObject {
 
     /* Speed (pixel/second) of the object in direction X and Y */
     //TODO: turn into velocity and angle?

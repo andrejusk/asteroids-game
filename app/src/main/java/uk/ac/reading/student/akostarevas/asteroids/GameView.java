@@ -2,7 +2,6 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -13,14 +12,14 @@ import android.widget.TextView;
 
 @SuppressWarnings("unused")
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
-	private volatile GameThread thread;
 
-	/* Handle communication from the GameThread to the View/Activity Thread */
-	GameHandler mHandler;
+	/* GameThread and communication handler */
+	private volatile GameThread thread;
+	GameHandler handler;
 
 	/* Pointers to the views */
-	TextView mScoreView;
-	TextView mStatusView;
+	TextView scoreView;
+	TextView statusView;
 
 	public GameView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -32,7 +31,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void setup() {
 		/* Set up a handler for messages from GameThread */
-		mHandler = new GameHandler(mScoreView, mStatusView);
+		handler = new GameHandler(scoreView, statusView);
 	}
 
 	/**
@@ -44,8 +43,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 		this.removeCallbacks(thread);
 		thread = null;
-
-		//this.setOnTouchListener(null);
 
 		SurfaceHolder holder = getHolder();
 		holder.removeCallback(this);

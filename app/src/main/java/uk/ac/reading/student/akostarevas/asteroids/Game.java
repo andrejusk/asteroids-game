@@ -3,7 +3,7 @@ package uk.ac.reading.student.akostarevas.asteroids;
 //Other parts of the android libraries that we use
 import android.graphics.Canvas;
 
-public class Game extends GameThread{
+public class Game extends GameThread {
 
     private MovableObject debugObject;
 
@@ -14,10 +14,10 @@ public class Game extends GameThread{
     Game(GameView gameView) {
         /* House keeping */
         super(gameView);
-        reset();
+        initialise();
     }
 
-    private void reset() {
+    private void initialise() {
         debugObject = new MovableObject(50, 50, 50, 50);
         /*
         ball = new Ball(mBall,
@@ -45,17 +45,15 @@ public class Game extends GameThread{
      */
     @Override
     public void setupBeginning() {
-        reset();
+        initialise();
     }
 
     @Override
-    protected void doDraw(Canvas canvas) {
+    protected void draw(Canvas canvas) {
         if (canvas == null) {
             return;
         }
-
-        super.doDraw(canvas);
-
+        super.draw(canvas);
         debugObject.draw(canvas);
     }
 

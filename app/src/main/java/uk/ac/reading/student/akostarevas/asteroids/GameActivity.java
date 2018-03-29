@@ -32,8 +32,8 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         mGameView = findViewById(R.id.gamearea);
-        mGameView.mStatusView = findViewById(R.id.text);
-        mGameView.mScoreView = findViewById(R.id.score);
+        mGameView.statusView = findViewById(R.id.text);
+        mGameView.scoreView = findViewById(R.id.score);
         mGameView.setup();
 
         this.startGame(savedInstanceState);

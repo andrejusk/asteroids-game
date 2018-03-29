@@ -3,8 +3,9 @@ package uk.ac.reading.student.akostarevas.asteroids;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
@@ -15,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+@SuppressWarnings("WeakerAccess")
 public abstract class GameThread extends Thread {
 	//Different mMode states
 	public static final int STATE_LOSE = 1;
@@ -62,15 +64,18 @@ public abstract class GameThread extends Thread {
 
     //Used to ensure appropriate threading
     static final Integer monitor = 1;
-	
+
+	Paint background;
 
 	public GameThread(GameView gameView) {		
 		mGameView = gameView;
-		
+
 		mSurfaceHolder = gameView.getHolder();
-		mHandler = gameView.mHandler;
+		mHandler = gameView.handler;
 		mContext = gameView.getContext();
 
+		background = new Paint();
+		background.setColor(Color.BLACK);
 		/*
 		mBackgroundImage = BitmapFactory.decodeResource
 							(gameView.getContext().getResources(), 
@@ -119,7 +124,7 @@ public abstract class GameThread extends Thread {
 					if (mMode == STATE_RUNNING) {
 						updatePhysics();
 					}
-					doDraw(canvasRun);
+					draw(canvasRun);
 				}
 			} 
 			finally {
@@ -145,10 +150,9 @@ public abstract class GameThread extends Thread {
 	}
 
 
-	protected void doDraw(Canvas canvas) {
-		
+	protected void draw(Canvas canvas) {
 		if(canvas == null) return;
-
+		canvas.drawRect(0, 0, mCanvasWidth, mCanvasHeight, background);
 		//if(mBackgroundImage != null) canvas.drawBitmap(mBackgroundImage, 0, 0, null);
 	}
 	
