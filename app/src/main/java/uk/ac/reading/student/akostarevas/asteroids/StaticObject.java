@@ -7,6 +7,7 @@ import android.graphics.Paint;
 abstract class StaticObject {
 
     final static float SIZE = 10;
+    Paint debugPaint;
 
     float x;
     float y;
@@ -14,10 +15,12 @@ abstract class StaticObject {
     StaticObject(float x, float y) {
         this.x = x;
         this.y = y;
+        debugPaint = new Paint();
+        debugPaint.setColor(Color.GREEN);
     }
 
     void draw(Canvas canvas) {
-        canvas.drawCircle(x, y, SIZE, new Paint(Color.GREEN));
+        canvas.drawCircle(x, y, SIZE, debugPaint);
     }
 
 }
