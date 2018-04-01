@@ -10,8 +10,8 @@ import android.view.WindowManager;
  */
 public class GameActivity extends AppCompatActivity {
 
-    private GameThread mGameThread;
-    private GameView mGameView;
+    private GameThread gameThread;
+    private GameView gameView;
 
     /**
      * Create game function.
@@ -31,10 +31,10 @@ public class GameActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_game);
 
-        mGameView = findViewById(R.id.gamearea);
-        mGameView.statusView = findViewById(R.id.text);
-        mGameView.scoreView = findViewById(R.id.score);
-        mGameView.setup();
+        gameView = findViewById(R.id.gamearea);
+        gameView.statusView = findViewById(R.id.text);
+        gameView.scoreView = findViewById(R.id.score);
+        gameView.setup();
 
         this.startGame(savedInstanceState);
     }
@@ -47,9 +47,9 @@ public class GameActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     private void startGame(Bundle savedInstanceState) {
         //TODO: savedInstance
-        mGameThread = new Game(mGameView);
-        mGameView.setThread(mGameThread);
-        mGameThread.setState(GameThread.STATE_READY);
+        gameThread = new Game(gameView);
+        gameView.setThread(gameThread);
+        gameThread.setState(GameThread.STATE_READY);
     }
 
     /**
@@ -59,8 +59,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        if (mGameThread.getMode() == GameThread.STATE_RUNNING) {
-            mGameThread.setState(GameThread.STATE_PAUSE);
+        if (gameThread.mode == GameThread.STATE_RUNNING) {
+            gameThread.setState(GameThread.STATE_PAUSE);
         }
     }
 
@@ -72,9 +72,9 @@ public class GameActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        mGameView.cleanup();
-        mGameThread = null;
-        mGameView = null;
+        gameView.cleanup();
+        gameThread = null;
+        gameView = null;
     }
 
 }

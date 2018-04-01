@@ -14,37 +14,47 @@ import android.view.View;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class GameThread extends Thread {
-    //Different mode states
-    //TODO: what are enums
+    /* Different mode states */
     public static final int STATE_LOSE = 1;
     public static final int STATE_PAUSE = 2;
     public static final int STATE_READY = 3;
     public static final int STATE_RUNNING = 4;
     public static final int STATE_WIN = 5;
-    //Used to ensure appropriate threading
+    //TODO: what are enums
+    
+    /* Used to ensure appropriate threading */
     static final Integer monitor = 1;
-    //The view
+    
+    /* The view */
     public GameView gameView;
-    //Control variable for the mode of the game (e.g. STATE_WIN)
+
+    /* Control of the actual running inside run() */
+    boolean running = false;
+
+    /* Score tracking */
+    long score = 0;
+
+    /* Control variable for the mode of the game (e.g. STATE_WIN) */
     protected int mode = 1;
-    //We might want to extend this call - therefore protected
+
+    /* We might want to extend this call - therefore protected */
     protected int canvasWidth = 1;
     protected int canvasHeight = 1;
-    //Last time we updated the game physics
+
+    /* Last time we updated the game physics */
     protected long lastUpdate = 0;
-    protected long score = 0;
-    Paint background;
-    //Control of the actual running inside run()
-    private boolean running = false;
-    //The surface this thread (and only this thread) writes upon
+
+    /* Background */
+    private Paint background;
+
+    /* The surface this thread (and only this thread) writes upon */
     private SurfaceHolder surfaceHolder;
-    //the message handler to the View/Activity thread
+
+    /* The message handler to the View/Activity thread */
     private Handler handler;
-    //Android Context - this stores almost all we need to know
+
+    /* Android Context - this stores almost all we need to know */
     private Context context;
-    //Used for time keeping
-    private long now;
-    private float elapsed;
 
     public GameThread(GameView gameView) {
         this.gameView = gameView;
@@ -57,7 +67,7 @@ public abstract class GameThread extends Thread {
         background.setColor(Color.BLACK);
     }
 
-    /*
+    /**
      * Called when app is destroyed, so not really that important here
      * But if (later) the game involves more thread, we might need to stop a thread, and then we would need this
      * Dare I say memory leak...
@@ -69,24 +79,26 @@ public abstract class GameThread extends Thread {
         this.surfaceHolder = null;
     }
 
-    //Pre-begin a game
+    /**
+     * Pre-begin a game
+     */
     abstract public void setupBeginning();
 
-    //Starting up the game
+    /**
+     * Starting up the game
+     */
     public void setup() {
         synchronized (monitor) {
-
             setupBeginning();
-
             lastUpdate = System.currentTimeMillis() + 100;
-
             setState(STATE_RUNNING);
-
-            setScore(0);
+            updateScore(0);
         }
     }
 
-    //The thread start
+    /**
+     * Start thread.
+     */
     @Override
     public void run() {
         Canvas canvasRun;
@@ -109,8 +121,10 @@ public abstract class GameThread extends Thread {
         }
     }
 
-    /*
-     * Surfaces and drawing
+    /**
+     * Set surface size.
+     * @param width Width.
+     * @param height Height.
      */
     public void setSurfaceSize(int width, int height) {
         synchronized (monitor) {
@@ -120,27 +134,34 @@ public abstract class GameThread extends Thread {
     }
 
 
+    /**
+     * Draw background.
+     * @param canvas Canvas to draw to.
+     */
     protected void draw(Canvas canvas) {
-        if (canvas == null) return;
+        if (canvas == null) {
+            return;
+        }
         canvas.drawRect(0, 0, canvasWidth, canvasHeight, background);
     }
 
+    /**
+     * Update physics.
+     */
     private void updatePhysics() {
-        now = System.currentTimeMillis();
-        elapsed = (now - lastUpdate) / 1000.0f;
-
+        long now = System.currentTimeMillis();
+        float elapsed = (now - lastUpdate) / 1000.0f;
         updateGame(elapsed);
-
         lastUpdate = now;
     }
 
     abstract protected void updateGame(float secondsElapsed);
 
-	/*
-	 * Control functions
-	 */
-
-    //Finger touches the screen
+    /**
+     * On touch event.
+     * @param e MotionEvent
+     * @return Successful handle.
+     */
     public boolean onTouch(MotionEvent e) {
         if (e.getAction() == MotionEvent.ACTION_MOVE) {
             this.actionOnTouch(e.getRawX(), e.getRawY());
@@ -169,8 +190,8 @@ public abstract class GameThread extends Thread {
         //Override to do something
     }
 
-    /*
-     * Game states
+    /**
+     * Pause game.
      */
     public void pause() {
         synchronized (monitor) {
@@ -178,21 +199,33 @@ public abstract class GameThread extends Thread {
         }
     }
 
+    /**
+     * Unpause game.
+     */
     public void unpause() {
-        // Move the real time clock up to now
+        /* Move the real time clock up to now */
         synchronized (monitor) {
             lastUpdate = System.currentTimeMillis();
         }
         setState(STATE_RUNNING);
     }
 
-    //Send messages to View/Activity thread
+    /**
+     * Send messages to View/Activity thread.
+     * @param mode State to set to.
+     */
     public void setState(int mode) {
         synchronized (monitor) {
             setState(mode, null);
         }
     }
 
+    /**
+     * Sets game state.
+     * @param mode State to set to.
+     * @param message Message.
+     */
+    @SuppressWarnings("SameParameterValue")
     public void setState(int mode, CharSequence message) {
         synchronized (monitor) {
             this.mode = mode;
@@ -234,39 +267,11 @@ public abstract class GameThread extends Thread {
         }
     }
 
-    /*
-     * Getter and setter
+    /**
+     * Update and send a score to the View.
+     * Would it be better to do this inside this thread writing it manually on the screen?
      */
-    public void setSurfaceHolder(SurfaceHolder h) {
-        surfaceHolder = h;
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
-    public int getMode() {
-        return mode;
-    }
-
-    public void setMode(int mMode) {
-        this.mode = mMode;
-    }
-	
-	
-	/* ALL ABOUT SCORES */
-
-    public float getScore() {
-        return score;
-    }
-
-    //Send a score to the View to view
-    //Would it be better to do this inside this thread writing it manually on the screen?
-    public void setScore(long score) {
+    public void updateScore(long score) {
         this.score = score;
 
         synchronized (monitor) {
@@ -279,10 +284,19 @@ public abstract class GameThread extends Thread {
         }
     }
 
-    public void updateScore(long score) {
-        this.setScore(this.score + score);
+    /**
+     * Increments score.
+     * @param score Score to increment by.
+     */
+    @SuppressWarnings("unused")
+    public void increaseScore(long score) {
+        this.updateScore(this.score + score);
     }
 
+    /**
+     * Returns score as a String.
+     * @return score.
+     */
     protected CharSequence getScoreString() {
         return Long.toString(Math.round(this.score));
     }

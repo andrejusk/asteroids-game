@@ -11,35 +11,35 @@ import android.widget.TextView;
 class GameHandler extends Handler {
 
     /* Pointers to the views */
-    private TextView mScoreView;
-    private TextView mStatusView;
+    private TextView scoreView;
+    private TextView statusView;
 
-    GameHandler(TextView mScoreView, TextView mStatusView) {
-        this.mScoreView = mScoreView;
-        this.mStatusView = mStatusView;
+    GameHandler(TextView scoreView, TextView statusView) {
+        this.scoreView = scoreView;
+        this.statusView = statusView;
     }
 
     @Override
     public void handleMessage(Message m) {
         if(m.getData().getBoolean("score")) {
-            mScoreView.setText(m.getData().getString("text"));
+            scoreView.setText(m.getData().getString("text"));
         }
         else {
             //So it is a status
             int i = m.getData().getInt("viz");
             switch(i) {
                 case View.VISIBLE:
-                    this.mStatusView.setVisibility(View.VISIBLE);
+                    this.statusView.setVisibility(View.VISIBLE);
                     break;
                 case View.INVISIBLE:
-                    this.mStatusView.setVisibility(View.INVISIBLE);
+                    this.statusView.setVisibility(View.INVISIBLE);
                     break;
                 case View.GONE:
-                    this.mStatusView.setVisibility(View.GONE);
+                    this.statusView.setVisibility(View.GONE);
                     break;
             }
 
-            mStatusView.setText(m.getData().getString("text"));
+            statusView.setText(m.getData().getString("text"));
         }
     }
 }

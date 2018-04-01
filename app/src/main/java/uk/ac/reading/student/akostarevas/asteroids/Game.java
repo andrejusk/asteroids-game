@@ -91,7 +91,7 @@ public class Game extends GameThread {
         //Check for SmileyBall collision
         if(updateBallCollision(smileyBall.x, smileyBall.y)) {
             //Increase score
-            updateScore(1);
+            increaseScore(1);
         }
 
         //Loop through all SadBalls

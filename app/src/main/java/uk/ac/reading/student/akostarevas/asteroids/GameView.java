@@ -38,7 +38,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	 * Release any resources.
 	 */
 	public void cleanup() {
-		this.thread.setRunning(false);
+		this.thread.running = false;
 		this.thread.cleanup();
 
 		this.removeCallbacks(thread);
@@ -47,11 +47,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		SurfaceHolder holder = getHolder();
 		holder.removeCallback(this);
 	}
-	
-	/*
-	 * Setters and Getters
-	 */
 
+    /**
+     * Sets new thread.
+     * @param newThread Thread to set to.
+     */
 	public void setThread(GameThread newThread) {
 		thread = newThread;
 
@@ -65,13 +65,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		setClickable(true);
 		setFocusable(true);
 	}
-	
-	
-	/*
-	 * Screen functions
-	 */
 
-	//ensure that we go into pause state if we go out of focus
+    /**
+     * Ensure that we go into pause state if we go out of focus.
+     */
 	@Override
 	public void onWindowFocusChanged(boolean hasWindowFocus) {
 		if (thread != null) {
@@ -80,34 +77,43 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 
+    /**
+     * Called on created surface.
+     * @param holder SurfaceHolder
+     */
 	public void surfaceCreated(SurfaceHolder holder) {
 		if (thread != null) {
-			thread.setRunning(true);
+			thread.running = true;
 
 			if (thread.getState() == Thread.State.NEW) {
-				//Just start the new thread
+				/* Just start the new thread */
 				thread.start();
 			} else {
 				if (thread.getState() == Thread.State.TERMINATED) {
-					//Start a new thread
-					//Should be this to update screen with old game: new GameThread(this, thread);
-					//The method should set all fields in new thread to the value of old thread's fields 
+					/*
+					 * Start a new thread
+					 * Should be this to update screen with old game: new GameThread(this, thread);
+					 * The method should set all fields in new thread to the value of old thread's fields
+					 */
 					thread = new Game(this);
-					thread.setRunning(true);
+					thread.running = true;
 					thread.start();
 				}
 			}
 		}
 	}
 
-	//Always called once after surfaceCreated. Tell the GameThread the actual size
+	/**
+	 * Always called once after surfaceCreated.
+	 * Tell the GameThread the actual size.
+	 */
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		if (thread != null) {
 			thread.setSurfaceSize(width, height);
 		}
 	}
 
-	/*
+	/**
 	 * Need to stop the GameThread if the surface is destroyed
 	 * Remember this doesn't need to happen when app is paused on even stopped.
 	 */
@@ -115,19 +121,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 		boolean retry = true;
 		if (thread != null) {
-			thread.setRunning(false);
+			thread.running = false;
 		}
 
-		//join the thread with this thread
+		/* Join the thread with this thread */
 		while (retry) {
 			try {
 				if (thread != null) {
 					thread.join();
 				}
 				retry = false;
-			} catch (InterruptedException e) {
-				//naugthy, ought to do something...
-			}
+			} catch (InterruptedException ignored) { }
 		}
 	}
 

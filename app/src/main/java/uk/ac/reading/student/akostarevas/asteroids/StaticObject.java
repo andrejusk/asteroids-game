@@ -6,8 +6,8 @@ import android.graphics.Paint;
 
 abstract class StaticObject {
 
-    final static float SIZE = 10;
-    Paint debugPaint;
+    private final static float SIZE = 10;
+    private Paint debugPaint;
 
     float x;
     float y;
