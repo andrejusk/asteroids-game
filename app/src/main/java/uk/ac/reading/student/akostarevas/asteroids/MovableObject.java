@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 
 class MovableObject extends StaticObject {
 
-    private final static int tailMultiplier = 10;
+    protected final static int tailMultiplier = 10;
     private final static int speedMultiplier = 100;
 
     private int canvasWidth;
@@ -32,8 +32,11 @@ class MovableObject extends StaticObject {
         double xSpeed = (velocity * speedMultiplier) * Math.sin(angleRadians);
         double ySpeed = (velocity * speedMultiplier) * Math.cos(angleRadians);
 
-        x = (float) ((x + secondsElapsed * xSpeed) % canvasWidth);
-        y = (float) ((y + secondsElapsed * ySpeed) % canvasHeight);
+        float xRaw = (float) ((x + secondsElapsed * xSpeed) % canvasWidth);
+        float yRaw = (float) ((y + secondsElapsed * ySpeed) % canvasHeight);
+
+        x = (xRaw < 0) ? xRaw + canvasWidth : xRaw;
+        y = (yRaw < 0) ? yRaw + canvasHeight : yRaw;
     }
 
     @Override

@@ -8,6 +8,7 @@ public class Game extends GameThread {
 
     private MovableObject debugObject;
 
+    private StaticObject touchReference;
     private Player player;
 
     long lastKey;
@@ -23,6 +24,7 @@ public class Game extends GameThread {
     }
 
     private void initialise() {
+        touchReference = new StaticObject(canvasWidth / 3, canvasHeight / 2 * 3);
         debugObject = new MovableObject(50, 50, canvasWidth, canvasHeight, 45, 10);
         player = new Player(canvasWidth, canvasHeight);
         lastKey = System.currentTimeMillis();
@@ -42,6 +44,8 @@ public class Game extends GameThread {
             return;
         }
         super.draw(canvas);
+
+        touchReference.draw(canvas);
         debugObject.draw(canvas);
         player.draw(canvas);
     }
@@ -52,8 +56,24 @@ public class Game extends GameThread {
      */
     @Override
     protected void actionOnTouch(MotionEvent e) {
-        //Move the ball to the x position of the touch
-        //paddle.x = x;
+
+        /* Left side of screen - movement */
+        if (e.getRawX() < canvasWidth / 2) {
+            if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                touchReference = new StaticObject(e.getRawX(), e.getRawY());
+                player.thrusting = true;
+            }
+            if (e.getAction() == MotionEvent.ACTION_MOVE) {
+                StaticObject target = new StaticObject(e.getRawX(), e.getRawY());
+                player.updateAngle(touchReference, target);
+            }
+            if (e.getAction() == MotionEvent.ACTION_UP) {
+                player.thrusting = false;
+            }
+        } else {
+            player.thrusting = false;
+        }
+
     }
 
     @Override

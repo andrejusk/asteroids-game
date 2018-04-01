@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-abstract class StaticObject {
+class StaticObject {
 
     private final static float SIZE = 10;
     float x;

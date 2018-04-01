@@ -8,6 +8,8 @@ class Player extends MovableObject {
     private final static float angleMultiplier = 100;
     private final static float thrustSpeed = 5;
 
+    private final static float maxVelocity = 10;
+
     private float thrustAngle;
 
     boolean turningLeft;
@@ -22,6 +24,21 @@ class Player extends MovableObject {
 
         thrustAngle = 0;
         thrusting = false;
+    }
+
+    void updateAngle(StaticObject reference, StaticObject target) {
+
+        double xVector = target.x - reference.x;
+        double yVector = target.y - reference.y;
+
+        /* Quick maths */
+        thrustAngle = (float) (Math.atan(xVector / yVector) * 180.0 / Math.PI);
+
+        if (yVector < 0) {
+            thrustAngle = 180 + thrustAngle;
+        }
+
+
     }
 
     void move(float secondsElapsed) {
@@ -52,9 +69,17 @@ class Player extends MovableObject {
             /* Sum of squares */
             velocity = (float) Math.sqrt(Math.pow(xFinal, 2) + Math.pow(yFinal, 2));
 
+            if (velocity > maxVelocity) {
+                velocity = maxVelocity;
+            }
+
             /* Quick maths */
-            angle = (float) Math.atan(xFinal / yFinal);
-            
+            angle = (float) (Math.atan(xFinal / yFinal) * 180.0 / Math.PI);
+
+            if (yFinal < 0) {
+                angle = 180 + angle;
+            }
+
         }
 
         super.move(secondsElapsed);
@@ -62,8 +87,15 @@ class Player extends MovableObject {
 
     @Override
     void draw(Canvas canvas) {
-        canvas.drawText(String.valueOf(turningLeft), x + 50, y + 150, debugPaint);
-        canvas.drawText(String.valueOf(turningRight), x + 50, y + 200, debugPaint);
+        canvas.drawText(String.valueOf(thrusting), x + 50, y + 150, debugPaint);
+        canvas.drawText(String.valueOf(thrustAngle), x + 50, y + 200, debugPaint);
+
+        double thrustAngleRadians = (thrustAngle * Math.PI / 180.0);
+        double xThrust = (thrustSpeed * tailMultiplier) * Math.sin(thrustAngleRadians);
+        double yThrust = (thrustSpeed * tailMultiplier) * Math.cos(thrustAngleRadians);
+
+        canvas.drawLine(x, y, (float) (x + xThrust), (float) (y + yThrust), debugPaint);
+
         super.draw(canvas);
     }
 
