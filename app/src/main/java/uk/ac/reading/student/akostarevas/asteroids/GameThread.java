@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -170,7 +171,7 @@ public abstract class GameThread extends Thread {
             }
 
             if (mode == STATE_PAUSE) {
-                unpause();
+                unPause();
                 return true;
             }
 
@@ -183,29 +184,40 @@ public abstract class GameThread extends Thread {
         return false;
     }
 
-    protected void actionOnTouch(float x, float y) {
-        //Override to do something
+    abstract void actionOnTouch(float x, float y);
+
+    boolean onKey(KeyEvent event) {
+        synchronized (monitor) {
+            this.actionOnKey(event);
+        }
+        return false;
     }
+
+    abstract void actionOnKey(KeyEvent event);
 
     /**
      * Pause game.
      */
     public void pause() {
         synchronized (monitor) {
-            if (mode == STATE_RUNNING) setState(STATE_PAUSE);
+            if (mode == STATE_RUNNING) {
+                setState(STATE_PAUSE);
+            }
         }
     }
 
     /**
-     * Unpause game.
+     * UnPause game.
      */
-    public void unpause() {
+    public void unPause() {
         /* Move the real time clock up to now */
         synchronized (monitor) {
             lastUpdate = System.currentTimeMillis();
         }
         setState(STATE_RUNNING);
     }
+
+
 
     /**
      * Send messages to View/Activity thread.
@@ -294,10 +306,11 @@ public abstract class GameThread extends Thread {
      *
      * @param score Score to increment by.
      */
-    @SuppressWarnings("unused")
     public void increaseScore(long score) {
         this.updateScore(this.score + score);
     }
+
+
 
     /**
      * Returns score as a String.

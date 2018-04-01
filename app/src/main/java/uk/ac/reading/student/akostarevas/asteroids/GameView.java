@@ -3,6 +3,7 @@ package uk.ac.reading.student.akostarevas.asteroids;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -59,6 +60,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             @SuppressLint("ClickableViewAccessibility")
             public boolean onTouch(View v, MotionEvent event) {
                 return thread != null && thread.onTouch(event);
+            }
+        });
+
+        setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                return thread != null && thread.onKey(event);
             }
         });
 
