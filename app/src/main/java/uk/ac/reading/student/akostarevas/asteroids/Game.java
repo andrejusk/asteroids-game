@@ -3,7 +3,7 @@ package uk.ac.reading.student.akostarevas.asteroids;
 //Other parts of the android libraries that we use
 import android.graphics.Canvas;
 
-public class Game extends GameThread{
+public class Game extends GameThread {
 
     private MovableObject debugObject;
 
@@ -14,24 +14,24 @@ public class Game extends GameThread{
     Game(GameView gameView) {
         /* House keeping */
         super(gameView);
-        reset();
+        initialise();
     }
 
-    private void reset() {
+    private void initialise() {
         debugObject = new MovableObject(50, 50, 50, 50);
         /*
         ball = new Ball(mBall,
-                mCanvasWidth / 2, mCanvasHeight / 2,
-                mCanvasWidth / 3, mCanvasHeight / 3);
+                canvasWidth / 2, canvasHeight / 2,
+                canvasWidth / 3, canvasHeight / 3);
 
-        paddle = new Ball(mPaddle, mCanvasWidth / 2, mCanvasHeight);
+        paddle = new Ball(mPaddle, canvasWidth / 2, canvasHeight);
 
-        smileyBall = new Objective(mSmileyBall, mCanvasWidth / 2, mSmileyBall.getHeight() / 2);
+        smileyBall = new Objective(mSmileyBall, canvasWidth / 2, mSmileyBall.getHeight() / 2);
 
         sadBalls = new Obstacle[3];
-        sadBalls[0] = new Obstacle(mSadBall, mCanvasWidth / 3, mCanvasHeight / 3);
-        sadBalls[1] = new Obstacle(mSadBall, mCanvasWidth - mCanvasWidth / 3, mCanvasHeight / 3);
-        sadBalls[2] = new Obstacle(mSadBall, mCanvasWidth / 2, mCanvasHeight / 5);
+        sadBalls[0] = new Obstacle(mSadBall, canvasWidth / 3, canvasHeight / 3);
+        sadBalls[1] = new Obstacle(mSadBall, canvasWidth - canvasWidth / 3, canvasHeight / 3);
+        sadBalls[2] = new Obstacle(mSadBall, canvasWidth / 2, canvasHeight / 5);
 
         //Get the minimum distance between a small ball and a bigball
         //We leave out the square root to limit the calculations of the program
@@ -45,17 +45,15 @@ public class Game extends GameThread{
      */
     @Override
     public void setupBeginning() {
-        reset();
+        initialise();
     }
 
     @Override
-    protected void doDraw(Canvas canvas) {
+    protected void draw(Canvas canvas) {
         if (canvas == null) {
             return;
         }
-
-        super.doDraw(canvas);
-
+        super.draw(canvas);
         debugObject.draw(canvas);
     }
 
@@ -77,7 +75,7 @@ public class Game extends GameThread{
         //If the ball moves down on the screen
         if(ball.ySpeed > 0) {
             //Check for a paddle collision
-            updateBallCollision(paddle.x, mCanvasHeight);
+            updateBallCollision(paddle.x, canvasHeight);
         }
 
         ball.move(secondsElapsed);
@@ -86,14 +84,14 @@ public class Game extends GameThread{
         //Check if the ball hits either the left side or the right side of the screen
         //But only do something if the ball is moving towards that side of the screen
         //If it does that => change the direction of the ball in the X direction
-        if((ball.x <= ball.bitmap.getWidth() / 2 && ball.xSpeed < 0) || (ball.x >= mCanvasWidth - ball.bitmap.getWidth() / 2 && ball.xSpeed > 0) ) {
+        if((ball.x <= ball.bitmap.getWidth() / 2 && ball.xSpeed < 0) || (ball.x >= canvasWidth - ball.bitmap.getWidth() / 2 && ball.xSpeed > 0) ) {
             ball.xSpeed = -ball.xSpeed;
         }
 
         //Check for SmileyBall collision
         if(updateBallCollision(smileyBall.x, smileyBall.y)) {
             //Increase score
-            updateScore(1);
+            increaseScore(1);
         }
 
         //Loop through all SadBalls
@@ -109,7 +107,7 @@ public class Game extends GameThread{
         }
 
         //If the ball goes out of the bottom of the screen => lose the game
-        if(ball.y >= mCanvasHeight) {
+        if(ball.y >= canvasHeight) {
             setState(GameThread.STATE_LOSE);
         }
         */
