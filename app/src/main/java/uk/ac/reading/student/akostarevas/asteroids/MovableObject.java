@@ -1,13 +1,18 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
+import android.graphics.Canvas;
+
 class MovableObject extends StaticObject {
 
-    protected int canvasWidth;
-    protected int canvasHeight;
+    private final static int tailMultiplier = 10;
+    private final static int speedMultiplier = 100;
+
+    private int canvasWidth;
+    private int canvasHeight;
 
     /* Angle in degrees */
-    private float angle;
-    private float velocity;
+    float angle;
+    float velocity;
 
     MovableObject(float x, float y, int canvasWidth, int canvasHeight) {
         this(x, y, canvasWidth, canvasHeight, 0, 0);
@@ -21,20 +26,29 @@ class MovableObject extends StaticObject {
         this.velocity = velocity;
     }
 
-    @SuppressWarnings("unused")
-    MovableObject(float x, float y) {
-        this(x, y, 0, 0);
-    }
-
-    @SuppressWarnings("unused")
     void move(float secondsElapsed) {
         double angleRadians = (angle / 180.0 * Math.PI);
 
-        double xSpeed = velocity * Math.sin(angleRadians);
-        double ySpeed = velocity * Math.cos(angleRadians);
+        double xSpeed = (velocity * speedMultiplier) * Math.sin(angleRadians);
+        double ySpeed = (velocity * speedMultiplier) * Math.cos(angleRadians);
 
         x = (float) ((x + secondsElapsed * xSpeed) % canvasWidth);
         y = (float) ((y + secondsElapsed * ySpeed) % canvasHeight);
+    }
+
+    @Override
+    void draw(Canvas canvas) {
+        double angleRadians = (angle / 180.0 * Math.PI);
+
+        double xSpeed = (velocity * tailMultiplier) * Math.sin(angleRadians);
+        double ySpeed = (velocity * tailMultiplier) * Math.cos(angleRadians);
+
+        canvas.drawLine(x, y, (float) (x - xSpeed), (float) (y - ySpeed), debugPaint);
+
+        canvas.drawText(String.valueOf(angle), x + 50, y + 50, debugPaint);
+        canvas.drawText(String.valueOf(velocity), x + 50, y + 100, debugPaint);
+
+        super.draw(canvas);
     }
 
 }
