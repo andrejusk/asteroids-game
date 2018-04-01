@@ -2,15 +2,23 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 class MovableObject extends StaticObject {
 
-    /* Speed (pixel/second) of the object in direction X and Y */
-    //TODO: turn into velocity and angle?
-    private float xSpeed;
-    private float ySpeed;
+    protected int canvasWidth;
+    protected int canvasHeight;
 
-    MovableObject(float x, float y, float xSpeed, float ySpeed) {
+    /* Angle in degrees */
+    private float angle;
+    private float velocity;
+
+    MovableObject(float x, float y, int canvasWidth, int canvasHeight) {
+        this(x, y, canvasWidth, canvasHeight, 0,0);
+    }
+
+    MovableObject(float x, float y, int canvasWidth, int canvasHeight, float angle, float velocity) {
         super(x, y);
-        this.xSpeed = xSpeed;
-        this.ySpeed = ySpeed;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+        this.angle = angle;
+        this.velocity = velocity;
     }
 
     @SuppressWarnings("unused")
@@ -20,8 +28,13 @@ class MovableObject extends StaticObject {
 
     @SuppressWarnings("unused")
     void move(float secondsElapsed) {
-        x += secondsElapsed * xSpeed;
-        y += secondsElapsed * ySpeed;
+        double angleRadians = (angle / 180.0 * Math.PI);
+
+        double xSpeed = velocity * Math.sin(angleRadians);
+        double ySpeed = velocity * Math.cos(angleRadians);
+
+        x = (float) ((x + secondsElapsed * xSpeed) % canvasWidth);
+        y = (float) ((y + secondsElapsed * ySpeed) % canvasHeight);
     }
 
 }

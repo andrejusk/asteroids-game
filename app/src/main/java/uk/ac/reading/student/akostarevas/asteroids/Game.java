@@ -7,18 +7,20 @@ public class Game extends GameThread {
 
     private MovableObject debugObject;
 
+    private Player player;
+
     /**
      * Set up game.
      * @param gameView GameView
      */
     Game(GameView gameView) {
-        /* House keeping */
         super(gameView);
         initialise();
     }
 
     private void initialise() {
-        debugObject = new MovableObject(50, 50, 50, 50);
+        debugObject = new MovableObject(50, 50, canvasWidth, canvasHeight, 45, 1000);
+        //player = new Player()
         /*
         ball = new Ball(mBall,
                 canvasWidth / 2, canvasHeight / 2,
