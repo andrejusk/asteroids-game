@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -21,29 +22,23 @@ public abstract class GameThread extends Thread {
     public static final int STATE_RUNNING = 4;
     public static final int STATE_WIN = 5;
     //TODO: what are enums
-    
+
     /* Used to ensure appropriate threading */
     static final Integer monitor = 1;
-    
+
     /* The view */
     public GameView gameView;
-
-    /* Control of the actual running inside run() */
-    boolean running = false;
-
-    /* Score tracking */
-    long score = 0;
-
     /* Control variable for the mode of the game (e.g. STATE_WIN) */
     protected int mode = 1;
-
     /* We might want to extend this call - therefore protected */
     protected int canvasWidth = 1;
     protected int canvasHeight = 1;
-
     /* Last time we updated the game physics */
     protected long lastUpdate = 0;
-
+    /* Control of the actual running inside run() */
+    boolean running = false;
+    /* Score tracking */
+    long score = 0;
     /* Background */
     private Paint background;
 
@@ -123,7 +118,8 @@ public abstract class GameThread extends Thread {
 
     /**
      * Set surface size.
-     * @param width Width.
+     *
+     * @param width  Width.
      * @param height Height.
      */
     public void setSurfaceSize(int width, int height) {
@@ -136,6 +132,7 @@ public abstract class GameThread extends Thread {
 
     /**
      * Draw background.
+     *
      * @param canvas Canvas to draw to.
      */
     protected void draw(Canvas canvas) {
@@ -151,7 +148,7 @@ public abstract class GameThread extends Thread {
     private void updatePhysics() {
         long now = System.currentTimeMillis();
         float elapsed = (now - lastUpdate) / 1000.0f;
-        updateGame(elapsed);
+        this.updateGame(elapsed);
         lastUpdate = now;
     }
 
@@ -159,50 +156,55 @@ public abstract class GameThread extends Thread {
 
     /**
      * On touch event.
+     *
      * @param e MotionEvent
      * @return Successful handle.
      */
     public boolean onTouch(MotionEvent e) {
         if (e.getAction() == MotionEvent.ACTION_MOVE) {
-            this.actionOnTouch(e.getRawX(), e.getRawY());
+            this.actionOnTouch(e);
         } else if (e.getAction() == MotionEvent.ACTION_DOWN) {
-
             if (mode == STATE_READY || mode == STATE_LOSE || mode == STATE_WIN) {
                 setup();
                 return true;
             }
-
             if (mode == STATE_PAUSE) {
-                unpause();
+                unPause();
                 return true;
             }
-
             synchronized (monitor) {
-                this.actionOnTouch(e.getRawX(), e.getRawY());
+                this.actionOnTouch(e);
             }
-
         }
-
         return false;
     }
 
-    protected void actionOnTouch(float x, float y) {
-        //Override to do something
+    abstract void actionOnTouch(MotionEvent e);
+
+    boolean onKey(KeyEvent event) {
+        synchronized (monitor) {
+            this.actionOnKey(event);
+        }
+        return false;
     }
+
+    abstract void actionOnKey(KeyEvent event);
 
     /**
      * Pause game.
      */
     public void pause() {
         synchronized (monitor) {
-            if (mode == STATE_RUNNING) setState(STATE_PAUSE);
+            if (mode == STATE_RUNNING) {
+                setState(STATE_PAUSE);
+            }
         }
     }
 
     /**
-     * Unpause game.
+     * UnPause game.
      */
-    public void unpause() {
+    public void unPause() {
         /* Move the real time clock up to now */
         synchronized (monitor) {
             lastUpdate = System.currentTimeMillis();
@@ -210,8 +212,11 @@ public abstract class GameThread extends Thread {
         setState(STATE_RUNNING);
     }
 
+
+
     /**
      * Send messages to View/Activity thread.
+     *
      * @param mode State to set to.
      */
     public void setState(int mode) {
@@ -222,36 +227,42 @@ public abstract class GameThread extends Thread {
 
     /**
      * Sets game state.
-     * @param mode State to set to.
+     *
+     * @param mode    State to set to.
      * @param message Message.
      */
-    @SuppressWarnings("SameParameterValue")
     public void setState(int mode, CharSequence message) {
         synchronized (monitor) {
             this.mode = mode;
 
-            if (this.mode == STATE_RUNNING) {
-                Message msg = handler.obtainMessage();
-                Bundle b = new Bundle();
-                b.putString("text", "");
-                b.putInt("viz", View.INVISIBLE);
-                b.putBoolean("showAd", false);
-                msg.setData(b);
-                handler.sendMessage(msg);
-            } else {
-                Message msg = handler.obtainMessage();
-                Bundle b = new Bundle();
+            Message msg = handler.obtainMessage();
+            Bundle b = new Bundle();
 
+            b.putInt("viz", View.INVISIBLE);
+
+            if (this.mode == STATE_RUNNING) {
+                b.putString("text", "");
+                b.putBoolean("showAd", false);
+            } else {
                 Resources res = context.getResources();
-                CharSequence str = "";
-                if (this.mode == STATE_READY)
-                    str = res.getText(R.string.mode_ready);
-                else if (this.mode == STATE_PAUSE)
-                    str = res.getText(R.string.mode_pause);
-                else if (this.mode == STATE_LOSE)
-                    str = res.getText(R.string.mode_lose);
-                else if (this.mode == STATE_WIN) {
-                    str = res.getText(R.string.mode_win);
+                CharSequence str;
+
+                switch (this.mode) {
+                    case STATE_READY:
+                        str = res.getText(R.string.mode_ready);
+                        break;
+                    case STATE_PAUSE:
+                        str = res.getText(R.string.mode_pause);
+                        break;
+                    case STATE_LOSE:
+                        str = res.getText(R.string.mode_lose);
+                        break;
+                    case STATE_WIN:
+                        str = res.getText(R.string.mode_win);
+                        break;
+                    default:
+                        str = "";
+                        break;
                 }
 
                 if (message != null) {
@@ -259,19 +270,20 @@ public abstract class GameThread extends Thread {
                 }
 
                 b.putString("text", str.toString());
-                b.putInt("viz", View.VISIBLE);
-
-                msg.setData(b);
-                handler.sendMessage(msg);
             }
+
+            msg.setData(b);
+            handler.sendMessage(msg);
         }
     }
+
+
 
     /**
      * Update and send a score to the View.
      * Would it be better to do this inside this thread writing it manually on the screen?
      */
-    public void updateScore(long score) {
+    private void updateScore(long score) {
         this.score = score;
 
         synchronized (monitor) {
@@ -286,15 +298,18 @@ public abstract class GameThread extends Thread {
 
     /**
      * Increments score.
+     *
      * @param score Score to increment by.
      */
-    @SuppressWarnings("unused")
     public void increaseScore(long score) {
         this.updateScore(this.score + score);
     }
 
+
+
     /**
      * Returns score as a String.
+     *
      * @return score.
      */
     protected CharSequence getScoreString() {

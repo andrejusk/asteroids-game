@@ -4,18 +4,19 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-abstract class StaticObject {
+class StaticObject {
 
     private final static float SIZE = 10;
-    private Paint debugPaint;
-
     float x;
     float y;
+
+    Paint debugPaint;
 
     StaticObject(float x, float y) {
         this.x = x;
         this.y = y;
         debugPaint = new Paint();
+        debugPaint.setTextSize(45);
         debugPaint.setColor(Color.GREEN);
     }
 

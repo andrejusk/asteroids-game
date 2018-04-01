@@ -1,43 +1,33 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
-//Other parts of the android libraries that we use
 import android.graphics.Canvas;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 public class Game extends GameThread {
 
     private MovableObject debugObject;
 
+    private StaticObject touchReference;
+    private Player player;
+
+    long lastKey;
+
     /**
      * Set up game.
+     *
      * @param gameView GameView
      */
     Game(GameView gameView) {
-        /* House keeping */
         super(gameView);
         initialise();
     }
 
     private void initialise() {
-        debugObject = new MovableObject(50, 50, 50, 50);
-        /*
-        ball = new Ball(mBall,
-                canvasWidth / 2, canvasHeight / 2,
-                canvasWidth / 3, canvasHeight / 3);
-
-        paddle = new Ball(mPaddle, canvasWidth / 2, canvasHeight);
-
-        smileyBall = new Objective(mSmileyBall, canvasWidth / 2, mSmileyBall.getHeight() / 2);
-
-        sadBalls = new Obstacle[3];
-        sadBalls[0] = new Obstacle(mSadBall, canvasWidth / 3, canvasHeight / 3);
-        sadBalls[1] = new Obstacle(mSadBall, canvasWidth - canvasWidth / 3, canvasHeight / 3);
-        sadBalls[2] = new Obstacle(mSadBall, canvasWidth / 2, canvasHeight / 5);
-
-        //Get the minimum distance between a small ball and a bigball
-        //We leave out the square root to limit the calculations of the program
-        //Remember to do that when testing the distance as well
-        mMinDistanceBetweenBallAndPaddle = (mPaddle.getWidth() / 2 + mBall.getWidth() / 2) * (mPaddle.getWidth() / 2 + mBall.getWidth() / 2);
-        */
+        touchReference = new StaticObject(canvasWidth / 3, canvasHeight / 2 * 3);
+        debugObject = new MovableObject(50, 50, canvasWidth, canvasHeight, 45, 10);
+        player = new Player(canvasWidth, canvasHeight);
+        lastKey = System.currentTimeMillis();
     }
 
     /**
@@ -54,7 +44,10 @@ public class Game extends GameThread {
             return;
         }
         super.draw(canvas);
+
+        touchReference.draw(canvas);
         debugObject.draw(canvas);
+        player.draw(canvas);
     }
 
 
@@ -62,9 +55,41 @@ public class Game extends GameThread {
      * Runs on screen touch
      */
     @Override
-    protected void actionOnTouch(float x, float y) {
-        //Move the ball to the x position of the touch
-        //paddle.x = x;
+    protected void actionOnTouch(MotionEvent e) {
+
+        /* Left side of screen - movement */
+        if (e.getRawX() < canvasWidth / 2) {
+            if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                touchReference = new StaticObject(e.getRawX(), e.getRawY());
+                player.thrusting = true;
+            }
+            if (e.getAction() == MotionEvent.ACTION_MOVE) {
+                StaticObject target = new StaticObject(e.getRawX(), e.getRawY());
+                player.updateAngle(touchReference, target);
+            }
+            if (e.getAction() == MotionEvent.ACTION_UP) {
+                player.thrusting = false;
+            }
+        } else {
+            player.thrusting = false;
+        }
+
+    }
+
+    @Override
+    protected void actionOnKey(KeyEvent event) {
+        /* Angle */
+        if (event.getKeyCode() == KeyEvent.KEYCODE_A) {
+            player.turningLeft = (event.getAction() != KeyEvent.ACTION_UP);
+        }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_D) {
+            player.turningRight = (event.getAction() != KeyEvent.ACTION_UP);
+        }
+
+        /* Velocity */
+        if (event.getKeyCode() == KeyEvent.KEYCODE_W) {
+            player.thrusting = (event.getAction() != KeyEvent.ACTION_UP);
+        }
     }
 
 
@@ -112,6 +137,7 @@ public class Game extends GameThread {
         }
         */
         debugObject.move(secondsElapsed);
+        player.move(secondsElapsed);
     }
 
     /*

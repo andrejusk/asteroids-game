@@ -1,27 +1,57 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
+import android.graphics.Canvas;
+
 class MovableObject extends StaticObject {
 
-    /* Speed (pixel/second) of the object in direction X and Y */
-    //TODO: turn into velocity and angle?
-    private float xSpeed;
-    private float ySpeed;
+    protected final static int tailMultiplier = 10;
+    private final static int speedMultiplier = 100;
 
-    MovableObject(float x, float y, float xSpeed, float ySpeed) {
+    private int canvasWidth;
+    private int canvasHeight;
+
+    /* Angle in degrees */
+    float angle;
+    float velocity;
+
+    MovableObject(float x, float y, int canvasWidth, int canvasHeight) {
+        this(x, y, canvasWidth, canvasHeight, 0, 0);
+    }
+
+    MovableObject(float x, float y, int canvasWidth, int canvasHeight, float angle, float velocity) {
         super(x, y);
-        this.xSpeed = xSpeed;
-        this.ySpeed = ySpeed;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+        this.angle = angle;
+        this.velocity = velocity;
     }
 
-    @SuppressWarnings("unused")
-    MovableObject(float x, float y) {
-        this(x, y, 0, 0);
-    }
-
-    @SuppressWarnings("unused")
     void move(float secondsElapsed) {
-        x += secondsElapsed * xSpeed;
-        y += secondsElapsed * ySpeed;
+        double angleRadians = (angle / 180.0 * Math.PI);
+
+        double xSpeed = (velocity * speedMultiplier) * Math.sin(angleRadians);
+        double ySpeed = (velocity * speedMultiplier) * Math.cos(angleRadians);
+
+        float xRaw = (float) ((x + secondsElapsed * xSpeed) % canvasWidth);
+        float yRaw = (float) ((y + secondsElapsed * ySpeed) % canvasHeight);
+
+        x = (xRaw < 0) ? xRaw + canvasWidth : xRaw;
+        y = (yRaw < 0) ? yRaw + canvasHeight : yRaw;
+    }
+
+    @Override
+    void draw(Canvas canvas) {
+        double angleRadians = (angle / 180.0 * Math.PI);
+
+        double xSpeed = (velocity * tailMultiplier) * Math.sin(angleRadians);
+        double ySpeed = (velocity * tailMultiplier) * Math.cos(angleRadians);
+
+        canvas.drawLine(x, y, (float) (x - xSpeed), (float) (y - ySpeed), debugPaint);
+
+        canvas.drawText(String.valueOf(angle), x + 50, y + 50, debugPaint);
+        canvas.drawText(String.valueOf(velocity), x + 50, y + 100, debugPaint);
+
+        super.draw(canvas);
     }
 
 }

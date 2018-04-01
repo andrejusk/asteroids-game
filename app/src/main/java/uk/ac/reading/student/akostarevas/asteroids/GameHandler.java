@@ -21,13 +21,12 @@ class GameHandler extends Handler {
 
     @Override
     public void handleMessage(Message m) {
-        if(m.getData().getBoolean("score")) {
+        if (m.getData().getBoolean("score")) {
             scoreView.setText(m.getData().getString("text"));
-        }
-        else {
+        } else {
             //So it is a status
             int i = m.getData().getInt("viz");
-            switch(i) {
+            switch (i) {
                 case View.VISIBLE:
                     this.statusView.setVisibility(View.VISIBLE);
                     break;
