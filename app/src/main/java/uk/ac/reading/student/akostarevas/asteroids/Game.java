@@ -2,6 +2,7 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.graphics.Canvas;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 public class Game extends GameThread {
 
@@ -50,7 +51,7 @@ public class Game extends GameThread {
      * Runs on screen touch
      */
     @Override
-    protected void actionOnTouch(float x, float y) {
+    protected void actionOnTouch(MotionEvent e) {
         //Move the ball to the x position of the touch
         //paddle.x = x;
     }
@@ -67,7 +68,7 @@ public class Game extends GameThread {
 
         /* Velocity */
         if (event.getKeyCode() == KeyEvent.KEYCODE_W) {
-            player.velocity = (event.getAction() != KeyEvent.ACTION_UP) ? 0 : 10;
+            player.thrusting = (event.getAction() != KeyEvent.ACTION_UP);
         }
     }
 

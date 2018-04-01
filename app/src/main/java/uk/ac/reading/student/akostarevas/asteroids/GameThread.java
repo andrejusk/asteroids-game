@@ -148,7 +148,7 @@ public abstract class GameThread extends Thread {
     private void updatePhysics() {
         long now = System.currentTimeMillis();
         float elapsed = (now - lastUpdate) / 1000.0f;
-        updateGame(elapsed);
+        this.updateGame(elapsed);
         lastUpdate = now;
     }
 
@@ -162,29 +162,24 @@ public abstract class GameThread extends Thread {
      */
     public boolean onTouch(MotionEvent e) {
         if (e.getAction() == MotionEvent.ACTION_MOVE) {
-            this.actionOnTouch(e.getRawX(), e.getRawY());
+            this.actionOnTouch(e);
         } else if (e.getAction() == MotionEvent.ACTION_DOWN) {
-
             if (mode == STATE_READY || mode == STATE_LOSE || mode == STATE_WIN) {
                 setup();
                 return true;
             }
-
             if (mode == STATE_PAUSE) {
                 unPause();
                 return true;
             }
-
             synchronized (monitor) {
-                this.actionOnTouch(e.getRawX(), e.getRawY());
+                this.actionOnTouch(e);
             }
-
         }
-
         return false;
     }
 
-    abstract void actionOnTouch(float x, float y);
+    abstract void actionOnTouch(MotionEvent e);
 
     boolean onKey(KeyEvent event) {
         synchronized (monitor) {
