@@ -224,33 +224,38 @@ public abstract class GameThread extends Thread {
      * @param mode    State to set to.
      * @param message Message.
      */
-    @SuppressWarnings("SameParameterValue")
     public void setState(int mode, CharSequence message) {
         synchronized (monitor) {
             this.mode = mode;
 
-            if (this.mode == STATE_RUNNING) {
-                Message msg = handler.obtainMessage();
-                Bundle b = new Bundle();
-                b.putString("text", "");
-                b.putInt("viz", View.INVISIBLE);
-                b.putBoolean("showAd", false);
-                msg.setData(b);
-                handler.sendMessage(msg);
-            } else {
-                Message msg = handler.obtainMessage();
-                Bundle b = new Bundle();
+            Message msg = handler.obtainMessage();
+            Bundle b = new Bundle();
 
+            b.putInt("viz", View.INVISIBLE);
+
+            if (this.mode == STATE_RUNNING) {
+                b.putString("text", "");
+                b.putBoolean("showAd", false);
+            } else {
                 Resources res = context.getResources();
-                CharSequence str = "";
-                if (this.mode == STATE_READY)
-                    str = res.getText(R.string.mode_ready);
-                else if (this.mode == STATE_PAUSE)
-                    str = res.getText(R.string.mode_pause);
-                else if (this.mode == STATE_LOSE)
-                    str = res.getText(R.string.mode_lose);
-                else if (this.mode == STATE_WIN) {
-                    str = res.getText(R.string.mode_win);
+                CharSequence str;
+
+                switch (this.mode) {
+                    case STATE_READY:
+                        str = res.getText(R.string.mode_ready);
+                        break;
+                    case STATE_PAUSE:
+                        str = res.getText(R.string.mode_pause);
+                        break;
+                    case STATE_LOSE:
+                        str = res.getText(R.string.mode_lose);
+                        break;
+                    case STATE_WIN:
+                        str = res.getText(R.string.mode_win);
+                        break;
+                    default:
+                        str = "";
+                        break;
                 }
 
                 if (message != null) {
@@ -258,19 +263,20 @@ public abstract class GameThread extends Thread {
                 }
 
                 b.putString("text", str.toString());
-                b.putInt("viz", View.VISIBLE);
-
-                msg.setData(b);
-                handler.sendMessage(msg);
             }
+
+            msg.setData(b);
+            handler.sendMessage(msg);
         }
     }
+
+
 
     /**
      * Update and send a score to the View.
      * Would it be better to do this inside this thread writing it manually on the screen?
      */
-    public void updateScore(long score) {
+    private void updateScore(long score) {
         this.score = score;
 
         synchronized (monitor) {
