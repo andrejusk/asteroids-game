@@ -10,7 +10,7 @@ class MovableObject extends StaticObject {
     private float velocity;
 
     MovableObject(float x, float y, int canvasWidth, int canvasHeight) {
-        this(x, y, canvasWidth, canvasHeight, 0,0);
+        this(x, y, canvasWidth, canvasHeight, 0, 0);
     }
 
     MovableObject(float x, float y, int canvasWidth, int canvasHeight, float angle, float velocity) {

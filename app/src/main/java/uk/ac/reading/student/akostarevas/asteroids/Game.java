@@ -1,6 +1,7 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
 //Other parts of the android libraries that we use
+
 import android.graphics.Canvas;
 
 public class Game extends GameThread {
@@ -11,6 +12,7 @@ public class Game extends GameThread {
 
     /**
      * Set up game.
+     *
      * @param gameView GameView
      */
     Game(GameView gameView) {

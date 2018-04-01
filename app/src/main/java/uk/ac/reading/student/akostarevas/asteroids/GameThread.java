@@ -21,29 +21,23 @@ public abstract class GameThread extends Thread {
     public static final int STATE_RUNNING = 4;
     public static final int STATE_WIN = 5;
     //TODO: what are enums
-    
+
     /* Used to ensure appropriate threading */
     static final Integer monitor = 1;
-    
+
     /* The view */
     public GameView gameView;
-
-    /* Control of the actual running inside run() */
-    boolean running = false;
-
-    /* Score tracking */
-    long score = 0;
-
     /* Control variable for the mode of the game (e.g. STATE_WIN) */
     protected int mode = 1;
-
     /* We might want to extend this call - therefore protected */
     protected int canvasWidth = 1;
     protected int canvasHeight = 1;
-
     /* Last time we updated the game physics */
     protected long lastUpdate = 0;
-
+    /* Control of the actual running inside run() */
+    boolean running = false;
+    /* Score tracking */
+    long score = 0;
     /* Background */
     private Paint background;
 
@@ -123,7 +117,8 @@ public abstract class GameThread extends Thread {
 
     /**
      * Set surface size.
-     * @param width Width.
+     *
+     * @param width  Width.
      * @param height Height.
      */
     public void setSurfaceSize(int width, int height) {
@@ -136,6 +131,7 @@ public abstract class GameThread extends Thread {
 
     /**
      * Draw background.
+     *
      * @param canvas Canvas to draw to.
      */
     protected void draw(Canvas canvas) {
@@ -159,6 +155,7 @@ public abstract class GameThread extends Thread {
 
     /**
      * On touch event.
+     *
      * @param e MotionEvent
      * @return Successful handle.
      */
@@ -212,6 +209,7 @@ public abstract class GameThread extends Thread {
 
     /**
      * Send messages to View/Activity thread.
+     *
      * @param mode State to set to.
      */
     public void setState(int mode) {
@@ -222,7 +220,8 @@ public abstract class GameThread extends Thread {
 
     /**
      * Sets game state.
-     * @param mode State to set to.
+     *
+     * @param mode    State to set to.
      * @param message Message.
      */
     @SuppressWarnings("SameParameterValue")
@@ -286,6 +285,7 @@ public abstract class GameThread extends Thread {
 
     /**
      * Increments score.
+     *
      * @param score Score to increment by.
      */
     @SuppressWarnings("unused")
@@ -295,6 +295,7 @@ public abstract class GameThread extends Thread {
 
     /**
      * Returns score as a String.
+     *
      * @return score.
      */
     protected CharSequence getScoreString() {

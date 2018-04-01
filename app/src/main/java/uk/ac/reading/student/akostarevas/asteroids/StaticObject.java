@@ -7,10 +7,9 @@ import android.graphics.Paint;
 abstract class StaticObject {
 
     private final static float SIZE = 10;
-    private Paint debugPaint;
-
     float x;
     float y;
+    private Paint debugPaint;
 
     StaticObject(float x, float y) {
         this.x = x;
