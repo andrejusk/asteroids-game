@@ -2,7 +2,7 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.graphics.Canvas;
 
-class MovableObject extends StaticObject {
+class MotionObject extends GameObject {
 
     /* Physics variables */
     final static int tailMultiplier = 10;
@@ -18,19 +18,15 @@ class MovableObject extends StaticObject {
     float velocity;
 
     /* Special flags */
-    boolean warp;
-    boolean enteringBounds;
+    private boolean warp;
+    private boolean enteringBounds;
     boolean exitedBounds = false;
 
-    MovableObject(float x, float y, int canvasWidth, int canvasHeight) {
-        this(x, y, canvasWidth, canvasHeight, 0, 0);
+    MotionObject(float x, float y, int canvasWidth, int canvasHeight) {
+        this(x, y, canvasWidth, canvasHeight, 0, 0, false);
     }
 
-    MovableObject(float x, float y, int canvasWidth, int canvasHeight, float angle, float velocity) {
-        this(x, y, canvasWidth, canvasHeight, angle, velocity, false);
-    }
-
-    MovableObject(float x, float y, int canvasWidth, int canvasHeight, float angle, float velocity, boolean enteringBounds) {
+    MotionObject(float x, float y, int canvasWidth, int canvasHeight, float angle, float velocity, boolean enteringBounds) {
         super(x, y);
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
@@ -103,7 +99,7 @@ class MovableObject extends StaticObject {
         return inBounds(x, y, this.canvasWidth, this.canvasHeight);
     }
 
-    static boolean inBounds(double x, double y, int canvasWidth, int canvasHeight) {
+    private static boolean inBounds(double x, double y, int canvasWidth, int canvasHeight) {
         return (x <= canvasWidth && x >= 0 && y <= canvasHeight && y >= 0);
     }
 

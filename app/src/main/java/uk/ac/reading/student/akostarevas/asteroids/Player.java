@@ -3,12 +3,12 @@ package uk.ac.reading.student.akostarevas.asteroids;
 import android.graphics.Canvas;
 
 @SuppressWarnings("unused")
-class Player extends MovableObject {
+class Player extends MotionObject {
 
     private final static float angleMultiplier = 100;
     private final static float thrustSpeed = (float) 0.15;
 
-    final static int directionMultiplier = 5;
+    private final static int directionMultiplier = 5;
 
     private final static float maxVelocity = 25;
 
@@ -28,7 +28,7 @@ class Player extends MovableObject {
         thrusting = false;
     }
 
-    void updateAngle(StaticObject reference, StaticObject target) {
+    void updateAngle(GameObject reference, GameObject target) {
 
         double xVector = target.x - reference.x;
         double yVector = target.y - reference.y;

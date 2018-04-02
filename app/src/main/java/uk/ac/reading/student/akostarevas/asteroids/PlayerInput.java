@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-public class Controller extends StaticObject {
+public class PlayerInput extends GameObject {
 
     private Paint controllerPaint;
 
@@ -17,7 +17,7 @@ public class Controller extends StaticObject {
 
     private float controllerSize;
 
-    Controller(float x, float y, TYPE type) {
+    PlayerInput(float x, float y, TYPE type) {
         super(x, y);
 
         active = false;

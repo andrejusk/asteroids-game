@@ -9,10 +9,10 @@ import java.util.Random;
 
 public class Game extends GameThread {
 
-    private ArrayList<MovableObject> objects;
+    private ArrayList<MotionObject> objects;
 
-    private Controller joystick;
-    private Controller thrust, shoot;
+    private PlayerInput joystick;
+    private PlayerInput thrust, shoot;
 
     //TODO: figure out better way of doing this
     private final static float joyX = (float) (1.0 / 3.0);
@@ -39,8 +39,8 @@ public class Game extends GameThread {
     private void initialise() {
         createJoystick(canvasWidth * joyX, canvasHeight * joyY);
 
-        thrust = new Controller(canvasWidth * thrustX, canvasHeight * thrustY, Controller.TYPE.THRUST);
-        shoot = new Controller(canvasWidth * shootX, canvasHeight * shootY, Controller.TYPE.SHOOT);
+        thrust = new PlayerInput(canvasWidth * thrustX, canvasHeight * thrustY, PlayerInput.TYPE.THRUST);
+        shoot = new PlayerInput(canvasWidth * shootX, canvasHeight * shootY, PlayerInput.TYPE.SHOOT);
 
         player = new Player(canvasWidth, canvasHeight);
 
@@ -78,13 +78,13 @@ public class Game extends GameThread {
         player.draw(canvas);
 
         /* Draw objects */
-        for (MovableObject object : objects) {
+        for (MotionObject object : objects) {
             object.draw(canvas);
         }
     }
 
     private void createJoystick(float x, float y) {
-        joystick = new Controller(x, y, Controller.TYPE.JOYSTICK);
+        joystick = new PlayerInput(x, y, PlayerInput.TYPE.JOYSTICK);
     }
 
 
@@ -127,7 +127,7 @@ public class Game extends GameThread {
                 if (joystick.isPointer(pointerId)) {
                     x = e.getX(pointerIndex);
                     y = e.getY(pointerIndex);
-                    StaticObject target = new StaticObject(x, y);
+                    GameObject target = new GameObject(x, y);
                     player.updateAngle(joystick, target);
                 }
             }
@@ -195,7 +195,7 @@ public class Game extends GameThread {
             objects.add(new Asteroid(canvasWidth, canvasHeight));
         }
 
-        for (MovableObject object : objects) {
+        for (MotionObject object : objects) {
             object.move(secondsElapsed);
         }
     }

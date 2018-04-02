@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-class StaticObject {
+class GameObject {
 
     float size = 10;
     float x;
@@ -12,7 +12,7 @@ class StaticObject {
 
     Paint debugPaint;
 
-    StaticObject(float x, float y) {
+    GameObject(float x, float y) {
         this.x = x;
         this.y = y;
         debugPaint = new Paint();

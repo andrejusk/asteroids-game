@@ -4,15 +4,15 @@ import android.graphics.Canvas;
 
 import java.util.Random;
 
-public class Asteroid extends MovableObject {
+class Asteroid extends MotionObject {
 
-    public Asteroid(int canvasWidth, int canvasHeight) {
+    Asteroid(int canvasWidth, int canvasHeight) {
         super(0, 0, canvasWidth, canvasHeight, 0, 0, true);
 
         Random random = new Random();
 
         /* Random point outside bounds */
-        float startX = 0, startY = 0;
+        float startX, startY;
         do {
             startX = random.nextFloat() * (2 * canvasWidth) - canvasWidth / 2;
             startY = random.nextFloat() * (2 * canvasHeight) - canvasHeight / 2;
