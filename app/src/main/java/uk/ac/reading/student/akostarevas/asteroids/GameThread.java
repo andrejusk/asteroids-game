@@ -13,8 +13,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
-import static uk.ac.reading.student.akostarevas.asteroids.GameThread.STATE.*;
-
 @SuppressWarnings("WeakerAccess")
 public abstract class GameThread extends Thread {
     /* Different gameState states */
@@ -90,7 +88,7 @@ public abstract class GameThread extends Thread {
         synchronized (monitor) {
             setupBeginning();
             lastUpdate = System.currentTimeMillis() + 100;
-            setState(RUNNING);
+            setState(STATE.RUNNING);
             updateScore(0);
         }
     }
@@ -106,7 +104,7 @@ public abstract class GameThread extends Thread {
             try {
                 canvasRun = surfaceHolder.lockCanvas(null);
                 synchronized (monitor) {
-                    if (gameState == RUNNING) {
+                    if (gameState == STATE.RUNNING) {
                         updatePhysics();
                     }
                     draw(canvasRun);
@@ -166,11 +164,11 @@ public abstract class GameThread extends Thread {
      */
     public boolean onTouch(MotionEvent e) {
         if (e.getAction() == MotionEvent.ACTION_DOWN) {
-            if (gameState == READY || gameState == LOSE || gameState == WIN) {
+            if (gameState == STATE.READY || gameState == STATE.LOSE || gameState == STATE.WIN) {
                 setup();
                 return true;
             }
-            if (gameState == PAUSE) {
+            if (gameState == STATE.PAUSE) {
                 unPause();
                 return true;
             }
@@ -196,8 +194,8 @@ public abstract class GameThread extends Thread {
      */
     public void pause() {
         synchronized (monitor) {
-            if (gameState == RUNNING) {
-                setState(PAUSE);
+            if (gameState == STATE.RUNNING) {
+                setState(STATE.PAUSE);
             }
         }
     }
@@ -210,7 +208,7 @@ public abstract class GameThread extends Thread {
         synchronized (monitor) {
             lastUpdate = System.currentTimeMillis();
         }
-        setState(RUNNING);
+        setState(STATE.RUNNING);
     }
 
 
@@ -241,7 +239,7 @@ public abstract class GameThread extends Thread {
 
             b.putInt("viz", View.VISIBLE);
 
-            if (this.gameState == RUNNING) {
+            if (this.gameState == STATE.RUNNING) {
                 b.putString("text", "");
                 b.putBoolean("showAd", false);
             } else {

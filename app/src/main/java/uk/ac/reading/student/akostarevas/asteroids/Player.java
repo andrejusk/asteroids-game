@@ -36,10 +36,10 @@ class Player extends MotionObject {
         thrustAngle = 0;
         thrusting = false;
 
-        playerSize = canvasHeight / playerScale;
+        this.playerSize = canvasHeight / playerScale;
 
-        this.normal = normal;
-        this.thrust = thrust;
+        this.normal = Bitmap.createScaledBitmap(normal, playerSize, playerSize, false);;
+        this.thrust = Bitmap.createScaledBitmap(thrust, playerSize, playerSize, false);;
 
         /* No anti-alias scaling */
         noAA = new Paint();
@@ -120,19 +120,16 @@ class Player extends MotionObject {
 
     private void drawPlayer(Canvas canvas, float x, float y) {
         /* Select correct bitmap */
-        Bitmap tempBitmap = (thrusting) ? thrust : normal;
-
-        /* Scale player */
-        tempBitmap = Bitmap.createScaledBitmap(tempBitmap, playerSize, playerSize, false);
+        Bitmap bitmap = (thrusting) ? thrust : normal;
 
         /* Rotate player */
         Matrix matrix = new Matrix();
-        matrix.postTranslate(-tempBitmap.getWidth()/2, -tempBitmap.getHeight()/2);
+        matrix.postTranslate(-bitmap.getWidth()/2, -bitmap.getHeight()/2);
         matrix.postRotate(180 - thrustAngle);
         matrix.postTranslate(x + (float) (playerSize / 2.0), y + (float) (playerSize / 2.0));
 
         /* Draw main player */
-        canvas.drawBitmap(tempBitmap, matrix, noAA);
+        canvas.drawBitmap(bitmap, matrix, noAA);
     }
 
     void debugDraw(Canvas canvas) {

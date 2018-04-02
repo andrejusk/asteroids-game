@@ -26,6 +26,8 @@ public class Game extends GameThread {
     private final static float shootX = (float) (2.5 / 3.0);
     private final static float shootY = (float) (2.0 / 3.0);
 
+    private final Bitmap playerNormal, playerThrust, asteroid;
+
     private Player player;
 
     /**
@@ -35,25 +37,17 @@ public class Game extends GameThread {
      */
     Game(GameView gameView) {
         super(gameView);
-        initialise();
-    }
 
-    private void initialise() {
-        createJoystick(canvasWidth * joyX, canvasHeight * joyY);
-
-        thrust = new PlayerInput(canvasWidth * thrustX, canvasHeight * thrustY, PlayerInput.TYPE.THRUST);
-        shoot = new PlayerInput(canvasWidth * shootX, canvasHeight * shootY, PlayerInput.TYPE.SHOOT);
-
-        Bitmap playerNormal = BitmapFactory.decodeResource(
+        playerNormal = BitmapFactory.decodeResource(
                 gameView.getContext().getResources(),
                 R.drawable.spaceship);
-        Bitmap playerThrust = BitmapFactory.decodeResource(
+        playerThrust = BitmapFactory.decodeResource(
                 gameView.getContext().getResources(),
                 R.drawable.spaceship_thrust);
 
-        player = new Player(canvasWidth, canvasHeight, playerNormal, playerThrust);
-
-        objects = new ArrayList<>();
+        asteroid = BitmapFactory.decodeResource(
+                gameView.getContext().getResources(),
+                R.drawable.asteroid);
     }
 
     /**
@@ -61,7 +55,14 @@ public class Game extends GameThread {
      */
     @Override
     public void setupBeginning() {
-        initialise();
+        createJoystick(canvasWidth * joyX, canvasHeight * joyY);
+
+        thrust = new PlayerInput(canvasWidth * thrustX, canvasHeight * thrustY, PlayerInput.TYPE.THRUST);
+        shoot = new PlayerInput(canvasWidth * shootX, canvasHeight * shootY, PlayerInput.TYPE.SHOOT);
+
+        player = new Player(canvasWidth, canvasHeight, playerNormal, playerThrust);
+
+        objects = new ArrayList<>();
     }
 
     @Override
@@ -201,7 +202,7 @@ public class Game extends GameThread {
 
         Random random = new Random();
         if (random.nextFloat() < 0.02) {
-            objects.add(new Asteroid(canvasWidth, canvasHeight));
+            objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
         }
 
         for (MotionObject object : objects) {
