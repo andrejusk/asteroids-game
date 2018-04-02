@@ -10,8 +10,8 @@ class MotionObject extends GameObject {
     private final static int dropOffDivisor = 4;
 
     /* Keep track of canvas */
-    private int canvasWidth;
-    private int canvasHeight;
+    int canvasWidth;
+    int canvasHeight;
 
     /* Angle in degrees */
     float angle;

@@ -1,6 +1,9 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 
 @SuppressWarnings("unused")
 class Player extends MotionObject {
@@ -12,13 +15,19 @@ class Player extends MotionObject {
 
     private final static float maxVelocity = 25;
 
+    private final static int playerScale = 16;
+
+    private final int playerSize;
+    private final Bitmap normal, thrust;
+    private final Paint noAA;
+
     private float thrustAngle;
 
     boolean turningLeft;
     boolean turningRight;
     boolean thrusting;
 
-    Player(int canvasWidth, int canvasHeight) {
+    Player(int canvasWidth, int canvasHeight, Bitmap normal, Bitmap thrust) {
         super(canvasWidth / 2, canvasHeight / 2, canvasWidth, canvasHeight);
 
         turningLeft = false;
@@ -26,6 +35,17 @@ class Player extends MotionObject {
 
         thrustAngle = 0;
         thrusting = false;
+
+        playerSize = canvasHeight / playerScale;
+
+        this.normal = normal;
+        this.thrust = thrust;
+
+        /* No anti-alias scaling */
+        noAA = new Paint();
+        noAA.setAntiAlias(false);
+        noAA.setFilterBitmap(false);
+        noAA.setDither(false);
     }
 
     void updateAngle(GameObject reference, GameObject target) {
@@ -88,6 +108,34 @@ class Player extends MotionObject {
 
     @Override
     void draw(Canvas canvas) {
+        drawPlayer(canvas, x, y);
+
+        /* Wrap around */
+        //TODO: conditionals for whether to bother?
+        drawPlayer(canvas, x + canvasWidth, y);
+        drawPlayer(canvas, x - canvasWidth, y);
+        drawPlayer(canvas, x, y + canvasHeight);
+        drawPlayer(canvas, x, y - canvasHeight);
+    }
+
+    private void drawPlayer(Canvas canvas, float x, float y) {
+        /* Select correct bitmap */
+        Bitmap tempBitmap = (thrusting) ? thrust : normal;
+
+        /* Scale player */
+        tempBitmap = Bitmap.createScaledBitmap(tempBitmap, playerSize, playerSize, false);
+
+        /* Rotate player */
+        Matrix matrix = new Matrix();
+        matrix.postTranslate(-tempBitmap.getWidth()/2, -tempBitmap.getHeight()/2);
+        matrix.postRotate(180 - thrustAngle);
+        matrix.postTranslate(x + (float) (playerSize / 2.0), y + (float) (playerSize / 2.0));
+
+        /* Draw main player */
+        canvas.drawBitmap(tempBitmap, matrix, noAA);
+    }
+
+    void debugDraw(Canvas canvas) {
         canvas.drawText(String.valueOf(thrusting), x + 50, y + 150, debugPaint);
         canvas.drawText(String.valueOf(thrustAngle), x + 50, y + 200, debugPaint);
 

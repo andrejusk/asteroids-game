@@ -1,5 +1,7 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -42,7 +44,14 @@ public class Game extends GameThread {
         thrust = new PlayerInput(canvasWidth * thrustX, canvasHeight * thrustY, PlayerInput.TYPE.THRUST);
         shoot = new PlayerInput(canvasWidth * shootX, canvasHeight * shootY, PlayerInput.TYPE.SHOOT);
 
-        player = new Player(canvasWidth, canvasHeight);
+        Bitmap playerNormal = BitmapFactory.decodeResource(
+                gameView.getContext().getResources(),
+                R.drawable.spaceship);
+        Bitmap playerThrust = BitmapFactory.decodeResource(
+                gameView.getContext().getResources(),
+                R.drawable.spaceship_thrust);
+
+        player = new Player(canvasWidth, canvasHeight, playerNormal, playerThrust);
 
         objects = new ArrayList<>();
     }
