@@ -21,7 +21,7 @@ class Player extends MotionObject {
     private final Bitmap normal, thrust;
     private final Paint noAA;
 
-    private float thrustAngle;
+    float thrustAngle;
 
     boolean turningLeft;
     boolean turningRight;
