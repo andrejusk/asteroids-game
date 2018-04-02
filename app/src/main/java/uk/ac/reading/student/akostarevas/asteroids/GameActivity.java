@@ -49,7 +49,7 @@ public class GameActivity extends AppCompatActivity {
         //TODO: savedInstance
         gameThread = new Game(gameView);
         gameView.setThread(gameThread);
-        gameThread.setState(GameThread.STATE_READY);
+        gameThread.setState(GameThread.STATE.READY);
     }
 
     /**
@@ -59,8 +59,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        if (gameThread.mode == GameThread.STATE_RUNNING) {
-            gameThread.setState(GameThread.STATE_PAUSE);
+        if (gameThread.gameState == GameThread.STATE.RUNNING) {
+            gameThread.setState(GameThread.STATE.PAUSE);
         }
     }
 

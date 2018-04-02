@@ -133,7 +133,7 @@ public class Game extends GameThread {
 
         //If the ball goes out of the bottom of the screen => lose the game
         if(ball.y >= canvasHeight) {
-            setState(GameThread.STATE_LOSE);
+            setState(GameThread.STATE.LOSE);
         }
         */
         debugObject.move(secondsElapsed);

@@ -13,32 +13,36 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import static uk.ac.reading.student.akostarevas.asteroids.GameThread.STATE.*;
+
 @SuppressWarnings("WeakerAccess")
 public abstract class GameThread extends Thread {
-    /* Different mode states */
-    public static final int STATE_LOSE = 1;
-    public static final int STATE_PAUSE = 2;
-    public static final int STATE_READY = 3;
-    public static final int STATE_RUNNING = 4;
-    public static final int STATE_WIN = 5;
-    //TODO: what are enums
+    /* Different gameState states */
+    enum STATE {
+        LOSE, PAUSE, READY, RUNNING, WIN
+    }
 
     /* Used to ensure appropriate threading */
     static final Integer monitor = 1;
 
     /* The view */
     public GameView gameView;
-    /* Control variable for the mode of the game (e.g. STATE_WIN) */
-    protected int mode = 1;
-    /* We might want to extend this call - therefore protected */
-    protected int canvasWidth = 1;
-    protected int canvasHeight = 1;
+
+    /* Control variable for the gameState of the game (e.g. STATE.WIN) */
+    protected STATE gameState;
+
+    protected int canvasWidth;
+    protected int canvasHeight;
+
     /* Last time we updated the game physics */
     protected long lastUpdate = 0;
+
     /* Control of the actual running inside run() */
     boolean running = false;
+
     /* Score tracking */
     long score = 0;
+
     /* Background */
     private Paint background;
 
@@ -86,7 +90,7 @@ public abstract class GameThread extends Thread {
         synchronized (monitor) {
             setupBeginning();
             lastUpdate = System.currentTimeMillis() + 100;
-            setState(STATE_RUNNING);
+            setState(RUNNING);
             updateScore(0);
         }
     }
@@ -102,7 +106,7 @@ public abstract class GameThread extends Thread {
             try {
                 canvasRun = surfaceHolder.lockCanvas(null);
                 synchronized (monitor) {
-                    if (mode == STATE_RUNNING) {
+                    if (gameState == RUNNING) {
                         updatePhysics();
                     }
                     draw(canvasRun);
@@ -164,11 +168,11 @@ public abstract class GameThread extends Thread {
         if (e.getAction() == MotionEvent.ACTION_MOVE) {
             this.actionOnTouch(e);
         } else if (e.getAction() == MotionEvent.ACTION_DOWN) {
-            if (mode == STATE_READY || mode == STATE_LOSE || mode == STATE_WIN) {
+            if (gameState == READY || gameState == LOSE || gameState == WIN) {
                 setup();
                 return true;
             }
-            if (mode == STATE_PAUSE) {
+            if (gameState == PAUSE) {
                 unPause();
                 return true;
             }
@@ -195,8 +199,8 @@ public abstract class GameThread extends Thread {
      */
     public void pause() {
         synchronized (monitor) {
-            if (mode == STATE_RUNNING) {
-                setState(STATE_PAUSE);
+            if (gameState == RUNNING) {
+                setState(PAUSE);
             }
         }
     }
@@ -209,7 +213,7 @@ public abstract class GameThread extends Thread {
         synchronized (monitor) {
             lastUpdate = System.currentTimeMillis();
         }
-        setState(STATE_RUNNING);
+        setState(RUNNING);
     }
 
 
@@ -217,47 +221,47 @@ public abstract class GameThread extends Thread {
     /**
      * Send messages to View/Activity thread.
      *
-     * @param mode State to set to.
+     * @param state State to set to.
      */
-    public void setState(int mode) {
+    public void setState(STATE state) {
         synchronized (monitor) {
-            setState(mode, null);
+            setState(state, null);
         }
     }
 
     /**
      * Sets game state.
      *
-     * @param mode    State to set to.
+     * @param state    State to set to.
      * @param message Message.
      */
-    public void setState(int mode, CharSequence message) {
+    public void setState(STATE state, CharSequence message) {
         synchronized (monitor) {
-            this.mode = mode;
+            this.gameState = state;
 
             Message msg = handler.obtainMessage();
             Bundle b = new Bundle();
 
             b.putInt("viz", View.INVISIBLE);
 
-            if (this.mode == STATE_RUNNING) {
+            if (this.gameState == RUNNING) {
                 b.putString("text", "");
                 b.putBoolean("showAd", false);
             } else {
                 Resources res = context.getResources();
                 CharSequence str;
 
-                switch (this.mode) {
-                    case STATE_READY:
+                switch (this.gameState) {
+                    case READY:
                         str = res.getText(R.string.mode_ready);
                         break;
-                    case STATE_PAUSE:
+                    case PAUSE:
                         str = res.getText(R.string.mode_pause);
                         break;
-                    case STATE_LOSE:
+                    case LOSE:
                         str = res.getText(R.string.mode_lose);
                         break;
-                    case STATE_WIN:
+                    case WIN:
                         str = res.getText(R.string.mode_win);
                         break;
                     default:
