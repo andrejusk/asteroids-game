@@ -1,21 +1,21 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 public class Controller extends StaticObject {
 
-    private Paint debugControllerPaint;
+    private Paint controllerPaint;
 
     enum TYPE {
-        BUTTON, JOYSTICK
+        THRUST, SHOOT, JOYSTICK
     }
 
     boolean active;
     int pointerId;
 
-    float controllerSize;
-    TYPE type;
+    private float controllerSize;
 
     Controller(float x, float y, TYPE type) {
         super(x, y);
@@ -23,19 +23,26 @@ public class Controller extends StaticObject {
         active = false;
         pointerId = -1;
 
-        debugControllerPaint = debugPaint;
-        debugControllerPaint.setAlpha(50);
-        this.type = type;
+        controllerPaint = new Paint();
+
         controllerSize = size;
 
         switch (type) {
-            case BUTTON:
+            case THRUST:
                 controllerSize *= 15;
+                controllerPaint.setColor(Color.CYAN);
+                break;
+            case SHOOT:
+                controllerSize *= 15;
+                controllerPaint.setColor(Color.RED);
                 break;
             case JOYSTICK:
                 controllerSize *= 30;
+                controllerPaint.setColor(Color.GREEN);
                 break;
         }
+
+        controllerPaint.setAlpha(50);
 
     }
 
@@ -46,7 +53,7 @@ public class Controller extends StaticObject {
         canvas.drawText(String.valueOf(active), x + 50, y + 50, debugPaint);
         canvas.drawText(String.valueOf(pointerId), x + 50, y + 100, debugPaint);
 
-        canvas.drawCircle(x, y, controllerSize, debugPaint);
+        canvas.drawCircle(x, y, controllerSize, controllerPaint);
     }
 
     boolean isAffected(float x, float y) {

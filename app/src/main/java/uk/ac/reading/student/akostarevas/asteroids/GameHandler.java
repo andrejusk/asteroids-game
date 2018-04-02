@@ -2,7 +2,6 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
 import android.widget.TextView;
 
 /**

@@ -15,11 +15,11 @@ public class Game extends GameThread {
     private final static float joyX = (float) (1.0 / 3.0);
     private final static float joyY = (float) (2.0 / 3.0);
 
-    private final static float thrustX = (float) (2.5 / 3.0);
-    private final static float thrustY = (float) (2.0 / 3.0);
+    private final static float thrustX = (float) (0.70);
+    private final static float thrustY = (float) (0.75);
 
-    private final static float shootX = (float) (0.70);
-    private final static float shootY = (float) (0.75);
+    private final static float shootX = (float) (2.5 / 3.0);
+    private final static float shootY = (float) (2.0 / 3.0);
 
     private Player player;
 
@@ -36,8 +36,8 @@ public class Game extends GameThread {
     private void initialise() {
         createJoystick(canvasWidth * joyX, canvasHeight * joyY);
 
-        thrust = new Controller( canvasWidth * thrustX, canvasHeight * thrustY, Controller.TYPE.BUTTON);
-        shoot = new Controller(canvasWidth * shootX, canvasHeight * shootY, Controller.TYPE.BUTTON);
+        thrust = new Controller(canvasWidth * thrustX, canvasHeight * thrustY, Controller.TYPE.THRUST);
+        shoot = new Controller(canvasWidth * shootX, canvasHeight * shootY, Controller.TYPE.SHOOT);
 
         debugObject = new MovableObject(50, 50, canvasWidth, canvasHeight, 45, 10);
         player = new Player(canvasWidth, canvasHeight);
