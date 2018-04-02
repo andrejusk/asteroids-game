@@ -302,6 +302,7 @@ public abstract class GameThread extends Thread {
      *
      * @param score Score to increment by.
      */
+    @SuppressWarnings("unused")
     public void increaseScore(long score) {
         this.updateScore(this.score + score);
     }
