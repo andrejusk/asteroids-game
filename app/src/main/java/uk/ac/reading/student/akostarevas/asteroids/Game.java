@@ -8,10 +8,8 @@ public class Game extends GameThread {
 
     private MovableObject debugObject;
 
-    private StaticObject touchReference;
+    private Controller touchReference;
     private Player player;
-
-    long lastKey;
 
     /**
      * Set up game.
@@ -24,10 +22,9 @@ public class Game extends GameThread {
     }
 
     private void initialise() {
-        touchReference = new StaticObject(canvasWidth / 3, canvasHeight / 2 * 3);
+        createJoystick(canvasWidth / 3, canvasHeight / 2 * 3);
         debugObject = new MovableObject(50, 50, canvasWidth, canvasHeight, 45, 10);
         player = new Player(canvasWidth, canvasHeight);
-        lastKey = System.currentTimeMillis();
     }
 
     /**
@@ -50,6 +47,10 @@ public class Game extends GameThread {
         player.draw(canvas);
     }
 
+    private void createJoystick(float x, float y) {
+        touchReference = new Controller(x, y, Controller.TYPE.JOYSTICK);
+    }
+
 
     /**
      * Runs on screen touch
@@ -57,21 +58,19 @@ public class Game extends GameThread {
     @Override
     protected void actionOnTouch(MotionEvent e) {
 
-        /* Left side of screen - movement */
+        /* Left side of screen - start */
         if (e.getRawX() < canvasWidth / 2) {
             if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                touchReference = new StaticObject(e.getRawX(), e.getRawY());
-                player.thrusting = true;
-            }
-            if (e.getAction() == MotionEvent.ACTION_MOVE) {
-                StaticObject target = new StaticObject(e.getRawX(), e.getRawY());
-                player.updateAngle(touchReference, target);
-            }
-            if (e.getAction() == MotionEvent.ACTION_UP) {
-                player.thrusting = false;
+                createJoystick(e.getRawX(), e.getRawY());
+                return;
             }
         } else {
-            player.thrusting = false;
+            //TODO: button controllers
+        }
+
+        if (e.getAction() == MotionEvent.ACTION_MOVE) {
+            StaticObject target = new StaticObject(e.getRawX(), e.getRawY());
+            player.updateAngle(touchReference, target);
         }
 
     }
