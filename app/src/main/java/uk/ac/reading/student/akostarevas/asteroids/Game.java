@@ -107,11 +107,19 @@ public class Game extends GameThread {
         }
 
         /* Finger moved */
-        else if (action == MotionEvent.ACTION_MOVE) {
-            /* If joystick finger */
-            if (joystick.isPointer(pointerId)) {
-                StaticObject target = new StaticObject(x, y);
-                player.updateAngle(joystick, target);
+        else if (action == MotionEvent.ACTION_MOVE || action == MotionEvent.ACTION_HOVER_MOVE) {
+            /* The pointerId is always zero on ACTION_MOVE, have to find it manually */
+            int pointerCount = e.getPointerCount();
+            for (int i = 0; i < pointerCount; i++) {
+                pointerIndex = i;
+                pointerId = e.getPointerId(pointerIndex);
+                /* Joystick finger */
+                if (joystick.isPointer(pointerId)) {
+                    x = e.getX(pointerIndex);
+                    y = e.getY(pointerIndex);
+                    StaticObject target = new StaticObject(x, y);
+                    player.updateAngle(joystick, target);
+                }
             }
         }
 
