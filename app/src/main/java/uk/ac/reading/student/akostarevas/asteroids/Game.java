@@ -61,6 +61,10 @@ public class Game extends GameThread {
         /* Draw background */
         super.draw(canvas);
 
+        if (super.gameState == STATE.READY) {
+            return;
+        }
+
         /* Draw controllers */
         joystick.draw(canvas);
         thrust.draw(canvas);

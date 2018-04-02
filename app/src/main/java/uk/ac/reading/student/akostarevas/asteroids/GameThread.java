@@ -195,13 +195,11 @@ public abstract class GameThread extends Thread {
      * Pause game.
      */
     public void pause() {
-        /*
         synchronized (monitor) {
             if (gameState == RUNNING) {
                 setState(PAUSE);
             }
         }
-        */
     }
 
     /**
