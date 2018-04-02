@@ -26,18 +26,7 @@ class GameHandler extends Handler {
         } else {
             //So it is a status
             int i = m.getData().getInt("viz");
-            switch (i) {
-                case View.VISIBLE:
-                    this.statusView.setVisibility(View.VISIBLE);
-                    break;
-                case View.INVISIBLE:
-                    this.statusView.setVisibility(View.INVISIBLE);
-                    break;
-                case View.GONE:
-                    this.statusView.setVisibility(View.GONE);
-                    break;
-            }
-
+            this.statusView.setVisibility(i);
             statusView.setText(m.getData().getString("text"));
         }
     }
