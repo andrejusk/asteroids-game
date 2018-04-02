@@ -4,9 +4,12 @@ import android.graphics.Canvas;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Game extends GameThread {
 
-    private MovableObject debugObject;
+    private ArrayList<MovableObject> objects;
 
     private Controller joystick;
     private Controller thrust, shoot;
@@ -39,8 +42,9 @@ public class Game extends GameThread {
         thrust = new Controller(canvasWidth * thrustX, canvasHeight * thrustY, Controller.TYPE.THRUST);
         shoot = new Controller(canvasWidth * shootX, canvasHeight * shootY, Controller.TYPE.SHOOT);
 
-        debugObject = new MovableObject(50, 50, canvasWidth, canvasHeight, 45, 10);
         player = new Player(canvasWidth, canvasHeight);
+
+        objects = new ArrayList<>();
     }
 
     /**
@@ -74,7 +78,9 @@ public class Game extends GameThread {
         player.draw(canvas);
 
         /* Draw objects */
-        debugObject.draw(canvas);
+        for (MovableObject object : objects) {
+            object.draw(canvas);
+        }
     }
 
     private void createJoystick(float x, float y) {
@@ -182,8 +188,16 @@ public class Game extends GameThread {
      */
     @Override
     protected void updateGame(float secondsElapsed) {
-        debugObject.move(secondsElapsed);
         player.move(secondsElapsed);
+
+        Random random = new Random();
+        if (random.nextFloat() < 0.02) {
+            objects.add(new Asteroid(canvasWidth, canvasHeight));
+        }
+
+        for (MovableObject object : objects) {
+            object.move(secondsElapsed);
+        }
     }
 
 }
