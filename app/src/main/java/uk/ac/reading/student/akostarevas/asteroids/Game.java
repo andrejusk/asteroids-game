@@ -161,9 +161,8 @@ public class Game extends GameThread {
                 }
                 /* Shoot button */
                 else if (shoot.isAffected(x, y)) {
-                    //TODO: shoot
-                    shoot.active = true;
-                    shoot.pointerId = pointerId;
+                    PlayerBullet bullet = new PlayerBullet(player);
+                    objects.add(bullet);
                 }
             }
         }
