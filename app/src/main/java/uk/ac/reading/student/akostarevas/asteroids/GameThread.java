@@ -165,9 +165,7 @@ public abstract class GameThread extends Thread {
      * @return Successful handle.
      */
     public boolean onTouch(MotionEvent e) {
-        if (e.getAction() == MotionEvent.ACTION_MOVE) {
-            this.actionOnTouch(e);
-        } else if (e.getAction() == MotionEvent.ACTION_DOWN) {
+        if (e.getAction() == MotionEvent.ACTION_DOWN) {
             if (gameState == READY || gameState == LOSE || gameState == WIN) {
                 setup();
                 return true;
@@ -176,14 +174,13 @@ public abstract class GameThread extends Thread {
                 unPause();
                 return true;
             }
-            synchronized (monitor) {
-                this.actionOnTouch(e);
-            }
         }
-        return false;
+        synchronized (monitor) {
+            return this.actionOnTouch(e);
+        }
     }
 
-    abstract void actionOnTouch(MotionEvent e);
+    abstract boolean actionOnTouch(MotionEvent e);
 
     boolean onKey(KeyEvent event) {
         synchronized (monitor) {
@@ -198,11 +195,13 @@ public abstract class GameThread extends Thread {
      * Pause game.
      */
     public void pause() {
+        /*
         synchronized (monitor) {
             if (gameState == RUNNING) {
                 setState(PAUSE);
             }
         }
+        */
     }
 
     /**

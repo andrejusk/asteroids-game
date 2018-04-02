@@ -8,7 +8,19 @@ public class Game extends GameThread {
 
     private MovableObject debugObject;
 
-    private Controller touchReference;
+    private Controller joystick;
+    private Controller thrust, shoot;
+
+    //TODO: figure out better way of doing this
+    private final static float joyX = (float) (1.0 / 3.0);
+    private final static float joyY = (float) (2.0 / 3.0);
+
+    private final static float thrustX = (float) (2.5 / 3.0);
+    private final static float thrustY = (float) (2.0 / 3.0);
+
+    private final static float shootX = (float) (0.70);
+    private final static float shootY = (float) (0.75);
+
     private Player player;
 
     /**
@@ -22,7 +34,11 @@ public class Game extends GameThread {
     }
 
     private void initialise() {
-        createJoystick(canvasWidth / 3, canvasHeight / 2 * 3);
+        createJoystick(canvasWidth * joyX, canvasHeight * joyY);
+
+        thrust = new Controller( canvasWidth * thrustX, canvasHeight * thrustY, Controller.TYPE.BUTTON);
+        shoot = new Controller(canvasWidth * shootX, canvasHeight * shootY, Controller.TYPE.BUTTON);
+
         debugObject = new MovableObject(50, 50, canvasWidth, canvasHeight, 45, 10);
         player = new Player(canvasWidth, canvasHeight);
     }
@@ -37,44 +53,101 @@ public class Game extends GameThread {
 
     @Override
     protected void draw(Canvas canvas) {
+        /* No canvas */
         if (canvas == null) {
             return;
         }
+
+        /* Draw background */
         super.draw(canvas);
 
-        touchReference.draw(canvas);
-        debugObject.draw(canvas);
+        /* Draw controllers */
+        joystick.draw(canvas);
+        thrust.draw(canvas);
+        shoot.draw(canvas);
+
+        /* Draw player */
         player.draw(canvas);
+
+        /* Draw objects */
+        debugObject.draw(canvas);
     }
 
     private void createJoystick(float x, float y) {
-        touchReference = new Controller(x, y, Controller.TYPE.JOYSTICK);
+        joystick = new Controller(x, y, Controller.TYPE.JOYSTICK);
     }
 
 
     /**
-     * Runs on screen touch
+     * Handles touch events.
+     * @param e MotionEvent to handle.
      */
     @Override
-    protected void actionOnTouch(MotionEvent e) {
+    protected boolean actionOnTouch(MotionEvent e) {
 
-        /* Left side of screen - start */
-        if (e.getRawX() < canvasWidth / 2) {
-            if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                createJoystick(e.getRawX(), e.getRawY());
-                return;
+        int pointerIndex = e.getActionIndex();
+        int pointerId = e.getPointerId(pointerIndex);
+        int action = e.getActionMasked();
+
+        /* Touch information */
+        float x = e.getX(pointerIndex);
+        float y = e.getY(pointerIndex);
+
+        /* Finger lifted up */
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP) {
+            /* If thrust finger */
+            if (thrust.isPointer(pointerId)) {
+                player.thrusting = false;
+                thrust.active = false;
             }
-        } else {
-            //TODO: button controllers
+            /* If joystick finger */
+            if (joystick.isPointer(pointerId)) {
+                joystick.active = false;
+            }
         }
 
-        if (e.getAction() == MotionEvent.ACTION_MOVE) {
-            StaticObject target = new StaticObject(e.getRawX(), e.getRawY());
-            player.updateAngle(touchReference, target);
+        /* Finger moved */
+        else if (action == MotionEvent.ACTION_MOVE) {
+            /* If joystick finger */
+            if (joystick.isPointer(pointerId)) {
+                StaticObject target = new StaticObject(x, y);
+                player.updateAngle(joystick, target);
+            }
         }
+
+        /* Finger pressed down */
+        else if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
+            /* Left side of screen */
+            if (x < canvasWidth / 2) {
+                createJoystick(x, y);
+                joystick.active = true;
+                joystick.pointerId = pointerId;
+            }
+            /* Right side of screen */
+            else {
+                /* Thrust button */
+                if (thrust.isAffected(x, y)) {
+                    player.thrusting = true;
+                    thrust.active = true;
+                    thrust.pointerId = pointerId;
+                }
+                /* Shoot button */
+                else if (shoot.isAffected(x, y)) {
+                    //TODO: shoot
+                    shoot.active = true;
+                    shoot.pointerId = pointerId;
+                }
+            }
+        }
+
+        return true;
 
     }
 
+    /**
+     * Handles keyboard events.
+     * @param event KeyEvent to handle.
+     */
     @Override
     protected void actionOnKey(KeyEvent event) {
         /* Angle */
@@ -92,80 +165,13 @@ public class Game extends GameThread {
     }
 
 
-    //This is run just before the game "scenario" is printed on the screen
+    /**
+     * This is run just before the game "scenario" is printed on the screen.
+     */
     @Override
     protected void updateGame(float secondsElapsed) {
-        /*
-        //If the ball moves down on the screen
-        if(ball.ySpeed > 0) {
-            //Check for a paddle collision
-            updateBallCollision(paddle.x, canvasHeight);
-        }
-
-        ball.move(secondsElapsed);
-        paddle.move(secondsElapsed);
-
-        //Check if the ball hits either the left side or the right side of the screen
-        //But only do something if the ball is moving towards that side of the screen
-        //If it does that => change the direction of the ball in the X direction
-        if((ball.x <= ball.bitmap.getWidth() / 2 && ball.xSpeed < 0) || (ball.x >= canvasWidth - ball.bitmap.getWidth() / 2 && ball.xSpeed > 0) ) {
-            ball.xSpeed = -ball.xSpeed;
-        }
-
-        //Check for SmileyBall collision
-        if(updateBallCollision(smileyBall.x, smileyBall.y)) {
-            //Increase score
-            increaseScore(1);
-        }
-
-        //Loop through all SadBalls
-        for (Obstacle obstacle : sadBalls) {
-            //Perform collisions (if necessary) between SadBall in position i and the red ball
-            updateBallCollision(obstacle.x, obstacle.y);
-        }
-
-        //If the ball goes out of the top of the screen and moves towards the top of the screen =>
-        //change the direction of the ball in the Y direction
-        if(ball.y <= ball.bitmap.getWidth() / 2 && ball.ySpeed < 0) {
-            ball.ySpeed = -ball.ySpeed;
-        }
-
-        //If the ball goes out of the bottom of the screen => lose the game
-        if(ball.y >= canvasHeight) {
-            setState(GameThread.STATE.LOSE);
-        }
-        */
         debugObject.move(secondsElapsed);
         player.move(secondsElapsed);
     }
 
-    /*
-    //Collision control between mBall and another big ball
-    private boolean updateBallCollision(float x, float y) {
-        //Get actual distance (without square root - remember?) between the mBall and the ball being checked
-        float distanceBetweenBallAndPaddle = (x - ball.x) * (x - ball.x) + (y - ball.y) *(y - ball.y);
-
-        //Check if the actual distance is lower than the allowed => collision
-        if(mMinDistanceBetweenBallAndPaddle >= distanceBetweenBallAndPaddle) {
-            //Get the present speed (this should also be the speed going away after the collision)
-            float speedOfBall = (float) Math.sqrt(ball.xSpeed * ball.xSpeed + ball.ySpeed * ball.ySpeed);
-
-            //Change the direction of the ball
-            ball.xSpeed = ball.x - x;
-            ball.ySpeed = ball.y - y;
-
-            //Get the speed after the collision
-            float newSpeedOfBall = (float) Math.sqrt(ball.xSpeed * ball.xSpeed + ball.ySpeed * ball.ySpeed);
-
-            //using the fraction between the original speed and present speed to calculate the needed
-            //velocities in X and Y to get the original speed but with the new angle.
-            ball.xSpeed = ball.xSpeed * speedOfBall / newSpeedOfBall;
-            ball.ySpeed = ball.ySpeed * speedOfBall / newSpeedOfBall;
-
-            return true;
-        }
-        return false;
-
-    }
-    */
 }
