@@ -4,8 +4,9 @@ import android.graphics.Canvas;
 
 class MovableObject extends StaticObject {
 
-    protected final static int tailMultiplier = 10;
+    final static int tailMultiplier = 10;
     private final static int speedMultiplier = 100;
+    private final static int dropoffMultiplier = 2;
 
     private int canvasWidth;
     private int canvasHeight;
@@ -27,6 +28,9 @@ class MovableObject extends StaticObject {
     }
 
     void move(float secondsElapsed) {
+        /* Update velocity */
+        velocity -= Math.log(velocity + 1) * secondsElapsed / dropoffMultiplier;
+
         double angleRadians = (angle / 180.0 * Math.PI);
 
         double xSpeed = (velocity * speedMultiplier) * Math.sin(angleRadians);

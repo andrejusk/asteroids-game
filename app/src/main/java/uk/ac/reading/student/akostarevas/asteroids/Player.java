@@ -6,9 +6,11 @@ import android.graphics.Canvas;
 class Player extends MovableObject {
 
     private final static float angleMultiplier = 100;
-    private final static float thrustSpeed = 5;
+    private final static float thrustSpeed = (float) 0.15;
 
-    private final static float maxVelocity = 10;
+    final static int directionMultiplier = 5;
+
+    private final static float maxVelocity = 25;
 
     private float thrustAngle;
 
@@ -37,7 +39,6 @@ class Player extends MovableObject {
         if (yVector < 0) {
             thrustAngle = 180 + thrustAngle;
         }
-
 
     }
 
@@ -91,8 +92,8 @@ class Player extends MovableObject {
         canvas.drawText(String.valueOf(thrustAngle), x + 50, y + 200, debugPaint);
 
         double thrustAngleRadians = (thrustAngle * Math.PI / 180.0);
-        double xThrust = (thrustSpeed * tailMultiplier) * Math.sin(thrustAngleRadians);
-        double yThrust = (thrustSpeed * tailMultiplier) * Math.cos(thrustAngleRadians);
+        double xThrust = (directionMultiplier * tailMultiplier) * Math.sin(thrustAngleRadians);
+        double yThrust = (directionMultiplier * tailMultiplier) * Math.cos(thrustAngleRadians);
 
         canvas.drawLine(x, y, (float) (x + xThrust), (float) (y + yThrust), debugPaint);
 
