@@ -241,7 +241,7 @@ public abstract class GameThread extends Thread {
             Message msg = handler.obtainMessage();
             Bundle b = new Bundle();
 
-            b.putInt("viz", View.INVISIBLE);
+            b.putInt("viz", View.VISIBLE);
 
             if (this.gameState == RUNNING) {
                 b.putString("text", "");
