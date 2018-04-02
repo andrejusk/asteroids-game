@@ -6,7 +6,7 @@ import android.graphics.Paint;
 
 class StaticObject {
 
-    private final static float SIZE = 10;
+    float size = 10;
     float x;
     float y;
 
@@ -21,7 +21,7 @@ class StaticObject {
     }
 
     void draw(Canvas canvas) {
-        canvas.drawCircle(x, y, SIZE, debugPaint);
+        canvas.drawCircle(x, y, size, debugPaint);
     }
 
 }
