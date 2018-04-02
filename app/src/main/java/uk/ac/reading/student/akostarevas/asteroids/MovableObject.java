@@ -7,7 +7,7 @@ class MovableObject extends StaticObject {
     /* Physics variables */
     final static int tailMultiplier = 10;
     private final static int speedMultiplier = 100;
-    private final static int dropOffMultiplier = 2;
+    private final static int dropOffDivisor = 4;
 
     /* Keep track of canvas */
     private int canvasWidth;
@@ -42,7 +42,7 @@ class MovableObject extends StaticObject {
 
     void move(float secondsElapsed) {
         /* Update velocity with drop off */
-        velocity -= Math.log(velocity + 1) * secondsElapsed / dropOffMultiplier;
+        velocity -= Math.log(velocity + 1) * secondsElapsed / dropOffDivisor;
 
         /* Calculate displacement */
         double angleRadians = (angle / 180.0 * Math.PI);
@@ -55,7 +55,7 @@ class MovableObject extends StaticObject {
         double yRaw = y + yDisplace;
 
         /* If out of bounds */
-        if (xRaw > canvasWidth || xRaw < 0 || yRaw > canvasHeight || yRaw < 0) {
+        if (!inBounds(xRaw, yRaw)) {
             /* If not supposed to be out of bounds */
             if (!enteringBounds) {
                 exitedBounds = true;
@@ -63,7 +63,7 @@ class MovableObject extends StaticObject {
         }
 
         /* If within bounds */
-        if (xRaw <= canvasWidth && xRaw >= 0 && yRaw <= canvasHeight && yRaw >= 0) {
+        if (inBounds(xRaw, yRaw)) {
             /* If started out of bounds */
             if (enteringBounds) {
                 enteringBounds = false;
@@ -97,6 +97,14 @@ class MovableObject extends StaticObject {
         canvas.drawText(String.valueOf(velocity), x + 50, y + 100, debugPaint);
 
         super.draw(canvas);
+    }
+
+    boolean inBounds(double x, double y) {
+        return inBounds(x, y, this.canvasWidth, this.canvasHeight);
+    }
+
+    static boolean inBounds(double x, double y, int canvasWidth, int canvasHeight) {
+        return (x <= canvasWidth && x >= 0 && y <= canvasHeight && y >= 0);
     }
 
 }
