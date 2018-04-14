@@ -10,8 +10,10 @@ public class PlayerBullet extends MotionObject {
     final Paint paint;
 
     PlayerBullet(Player player) {
-        //TODO: vector addition player speed fast fast
-        super(player.x, player.y, player.canvasWidth, player.canvasHeight, player.thrustAngle, bulletVelocity, true);
+        super(player.x + player.size / 2, player.y + player.size / 2,
+                player.canvasWidth, player.canvasHeight,
+                player.thrustAngle, bulletVelocity, true);
+
         paint = new Paint();
         paint.setColor(Color.WHITE);
     }
