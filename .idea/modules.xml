@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CS2JA16-Asteroids.iml" filepath="$PROJECT_DIR$/CS2JA16-Asteroids.iml" />
+      <module fileurl="file://C:\git\GitLab_University-of-Reading\km015609\CS2JA16-Asteroids.iml" filepath="C:\git\GitLab_University-of-Reading\km015609\CS2JA16-Asteroids.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\git\GitLab_University-of-Reading\km015609\app\app.iml" filepath="C:\git\GitLab_University-of-Reading\km015609\app\app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/km015609.iml" filepath="$PROJECT_DIR$/km015609.iml" />
     </modules>
   </component>
 </project>
