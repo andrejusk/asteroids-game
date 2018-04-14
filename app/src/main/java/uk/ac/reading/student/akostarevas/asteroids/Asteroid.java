@@ -12,7 +12,6 @@ class Asteroid extends MotionObject {
     private final Paint noAA;
 
     Bitmap bitmap;
-    int size;
 
     float rotationMultiplier;
     float rotation;
@@ -21,6 +20,9 @@ class Asteroid extends MotionObject {
         super(0, 0, canvasWidth, canvasHeight, 0, 0, true);
 
         Random random = new Random();
+
+        /* Size for inBounds() */
+        this.size = canvasHeight / 8;
 
         /* Random point outside bounds */
         float startX, startY;
@@ -49,10 +51,7 @@ class Asteroid extends MotionObject {
         /* Random speed */
         velocity = random.nextFloat() * 3 + 2;
 
-        /* Random size */
-        this.size = canvasHeight / 8;
-
-        this.bitmap = Bitmap.createScaledBitmap(bitmap, this.size, this.size, false);
+        this.bitmap = Bitmap.createScaledBitmap(bitmap, (int) this.size, (int) this.size, false);
 
         /* Random rotation */
         rotation = random.nextFloat() * 360;
