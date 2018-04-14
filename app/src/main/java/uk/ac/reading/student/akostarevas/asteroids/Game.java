@@ -200,7 +200,7 @@ public class Game extends GameThread {
         player.move(secondsElapsed);
 
         Random random = new Random();
-        if (random.nextFloat() < 0.02) {
+        if (random.nextFloat() < 0.01) {
             objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
         }
 

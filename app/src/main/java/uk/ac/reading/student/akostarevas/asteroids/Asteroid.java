@@ -50,14 +50,7 @@ class Asteroid extends MotionObject {
         velocity = random.nextFloat() * 3 + 2;
 
         /* Random size */
-        float size = random.nextFloat();
-        if (size < 0.5) {
-            this.size = canvasHeight / 8;
-        } else if (size < 0.8) {
-            this.size = canvasHeight / 16;
-        } else {
-            this.size = canvasHeight / 32;
-        }
+        this.size = canvasHeight / 8;
 
         this.bitmap = Bitmap.createScaledBitmap(bitmap, this.size, this.size, false);
 
