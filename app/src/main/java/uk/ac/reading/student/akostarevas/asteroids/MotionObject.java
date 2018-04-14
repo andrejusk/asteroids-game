@@ -7,7 +7,7 @@ class MotionObject extends GameObject {
     /* Physics variables */
     final static int tailMultiplier = 10;
     private final static int speedMultiplier = 100;
-    private final static int dropOffDivisor = 4;
+    private final static int dropOffDivisor = 100;
 
     /* Keep track of canvas */
     int canvasWidth;
@@ -38,7 +38,7 @@ class MotionObject extends GameObject {
 
     void move(float secondsElapsed) {
         /* Update velocity with drop off */
-        velocity -= Math.log(velocity + 1) * secondsElapsed / dropOffDivisor;
+        velocity -= Math.pow(velocity, 2) * secondsElapsed / dropOffDivisor;
 
         /* Calculate displacement */
         double angleRadians = (angle / 180.0 * Math.PI);

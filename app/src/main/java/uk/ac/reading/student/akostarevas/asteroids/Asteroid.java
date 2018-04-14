@@ -47,7 +47,7 @@ class Asteroid extends MotionObject {
         }
 
         /* Random speed */
-        velocity = random.nextFloat() * 4 + 6;
+        velocity = random.nextFloat() * 3 + 2;
 
         /* Random size */
         float size = random.nextFloat();
