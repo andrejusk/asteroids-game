@@ -199,7 +199,7 @@ public class Game extends GameThread {
     protected void updateGame(float secondsElapsed) {
         player.move(secondsElapsed);
 
-        Random random = new Random();
+        Random random = new Random(Double.doubleToLongBits(Math.random()));
         if (random.nextFloat() < 0.01) {
             objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
         }
