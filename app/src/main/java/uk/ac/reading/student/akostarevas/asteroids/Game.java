@@ -205,8 +205,37 @@ public class Game extends GameThread {
         }
 
         for (MotionObject object : objects) {
+            /* Move object */
             object.move(secondsElapsed);
         }
+        for (MotionObject object : objects) {
+            /* Check collisions */
+            for (MotionObject target : objects) {
+                if (collides(object, target)) {
+                    if (object instanceof Asteroid && target instanceof Asteroid) {
+                        System.out.println("two asteroids");
+                    }
+                    else if (object instanceof PlayerBullet) {
+                        if (target instanceof Player) {
+                            System.out.println("player bullet");
+                        }
+                        else if (target instanceof Asteroid) {
+                            System.out.println("asteroid hit");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean collides(MotionObject object, MotionObject target) {
+        /* Ignore self */
+        if (object == target) {
+            return false;
+        }
+        return
+                (Math.pow(object.x - target.x, 2) + Math.pow(object.y - target.y, 2))
+                < Math.pow(object.size + target.size, 2);
     }
 
 }
