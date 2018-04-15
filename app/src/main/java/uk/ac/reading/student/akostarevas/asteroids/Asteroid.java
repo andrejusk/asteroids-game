@@ -16,6 +16,33 @@ class Asteroid extends MotionObject {
     float rotationMultiplier;
     float rotation;
 
+    Asteroid(Asteroid parent, PlayerBullet playerBullet, boolean side) {
+        this(parent.canvasWidth, parent.canvasHeight, parent.bitmap);
+
+        /* Inherit position */
+        this.x = parent.x;
+        this.y = parent.y;
+
+        /* Resize */
+        this.size = parent.size / 2;
+        this.bitmap = Bitmap.createScaledBitmap(bitmap, (int) this.size, (int) this.size, false);
+
+        /* De-spawn if needed */
+        if (this.size < canvasHeight / 32) {
+            this.exitedBounds = true;
+        }
+        parent.exitedBounds = true;
+        playerBullet.exitedBounds = true;
+
+        /* Rotate */
+        if (side) {
+            this.angle = playerBullet.angle + 90;
+        } else {
+            this.angle = playerBullet.angle - 90;
+        }
+
+    }
+
     Asteroid(int canvasWidth, int canvasHeight, Bitmap bitmap) {
         super(0, 0, canvasWidth, canvasHeight, 0, 0, true);
 
