@@ -91,11 +91,6 @@ public class Game extends GameThread {
             return;
         }
 
-        /* Draw controllers */
-        joystick.draw(canvas);
-        thrust.draw(canvas);
-        shoot.draw(canvas);
-
         /* Draw Player */
         player.draw(canvas);
 
@@ -103,6 +98,12 @@ public class Game extends GameThread {
         for (MotionObject object : objects) {
             object.draw(canvas);
         }
+
+        /* Overlay controllers */
+        joystick.draw(canvas);
+        thrust.draw(canvas);
+        shoot.draw(canvas);
+
     }
 
     private void createJoystick(float x, float y) {
