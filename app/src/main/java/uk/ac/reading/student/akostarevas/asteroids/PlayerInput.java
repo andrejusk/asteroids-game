@@ -4,8 +4,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-public class PlayerInput extends GameObject {
+class PlayerInput extends GameObject {
 
+    /* Debug controller paint */
     private Paint controllerPaint;
 
     enum TYPE {
@@ -24,6 +25,8 @@ public class PlayerInput extends GameObject {
         pointerId = -1;
 
         controllerPaint = new Paint();
+        controllerPaint.setStyle(Paint.Style.STROKE);
+        controllerPaint.setStrokeWidth(10);
 
         controllerSize = size;
 
@@ -38,21 +41,23 @@ public class PlayerInput extends GameObject {
                 break;
             case JOYSTICK:
                 controllerSize *= 30;
-                controllerPaint.setColor(Color.GREEN);
+                controllerPaint.setColor(Color.WHITE);
                 break;
         }
 
-        controllerPaint.setAlpha(50);
+        controllerPaint.setAlpha(100);
 
     }
 
-    @Override
-    void draw(Canvas canvas) {
+    void debugDraw(Canvas canvas) {
         super.draw(canvas);
 
         canvas.drawText(String.valueOf(active), x + 50, y + 50, debugPaint);
         canvas.drawText(String.valueOf(pointerId), x + 50, y + 100, debugPaint);
+    }
 
+    @Override
+    void draw(Canvas canvas) {
         canvas.drawCircle(x, y, controllerSize, controllerPaint);
     }
 

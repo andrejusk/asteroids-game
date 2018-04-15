@@ -15,19 +15,29 @@ import android.view.View;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class GameThread extends Thread {
-    /* Different gameState states */
+    /*
+
+        Different gameState states
+
+        MENU - Game is in menu
+        PAUSE - Game is paused (due to focus loss)
+        RUNNING - Game is running
+        DEAD - Player has died, still has lives
+        FINISH - Player is out of lives
+
+     */
     enum STATE {
-        LOSE, PAUSE, READY, RUNNING, WIN
+        MENU, PAUSE, RUNNING, DEAD, FINISH
     }
+
+    /* Control variable for the gameState of the game (e.g. STATE.WIN) */
+    protected STATE gameState;
 
     /* Used to ensure appropriate threading */
     static final Integer monitor = 1;
 
     /* The view */
     public GameView gameView;
-
-    /* Control variable for the gameState of the game (e.g. STATE.WIN) */
-    protected STATE gameState;
 
     protected int canvasWidth;
     protected int canvasHeight;
@@ -164,8 +174,12 @@ public abstract class GameThread extends Thread {
      */
     public boolean onTouch(MotionEvent e) {
         if (e.getAction() == MotionEvent.ACTION_DOWN) {
-            if (gameState == STATE.READY || gameState == STATE.LOSE || gameState == STATE.WIN) {
+            if (gameState == STATE.MENU || gameState == STATE.DEAD) {
                 setup();
+                return true;
+            }
+            if (gameState == STATE.FINISH) {
+                //TODO: Save score, go to STATE.MENU
                 return true;
             }
             if (gameState == STATE.PAUSE) {
@@ -247,17 +261,17 @@ public abstract class GameThread extends Thread {
                 CharSequence str;
 
                 switch (this.gameState) {
-                    case READY:
-                        str = res.getText(R.string.mode_ready);
+                    case MENU:
+                        str = res.getText(R.string.mode_menu);
                         break;
                     case PAUSE:
                         str = res.getText(R.string.mode_pause);
                         break;
-                    case LOSE:
-                        str = res.getText(R.string.mode_lose);
+                    case DEAD:
+                        str = res.getText(R.string.mode_dead);
                         break;
-                    case WIN:
-                        str = res.getText(R.string.mode_win);
+                    case FINISH:
+                        str = res.getText(R.string.mode_finish);
                         break;
                     default:
                         str = "";
@@ -300,7 +314,6 @@ public abstract class GameThread extends Thread {
      *
      * @param score Score to increment by.
      */
-    @SuppressWarnings("unused")
     public void increaseScore(long score) {
         this.updateScore(this.score + score);
     }

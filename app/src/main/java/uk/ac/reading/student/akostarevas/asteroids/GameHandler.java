@@ -23,7 +23,6 @@ class GameHandler extends Handler {
         if (m.getData().getBoolean("score")) {
             scoreView.setText(m.getData().getString("text"));
         } else {
-            //So it is a status
             int i = m.getData().getInt("viz");
             this.statusView.setVisibility(i);
             statusView.setText(m.getData().getString("text"));

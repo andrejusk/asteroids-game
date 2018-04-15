@@ -6,6 +6,8 @@ import android.graphics.Paint;
 
 public class PlayerBullet extends MotionObject {
 
+    final static int bulletSize = 5;
+
     final static int bulletVelocity = 10;
     final Paint paint;
 
@@ -14,6 +16,7 @@ public class PlayerBullet extends MotionObject {
                 player.canvasWidth, player.canvasHeight,
                 player.thrustAngle, bulletVelocity, true);
 
+        this.size = bulletSize;
         paint = new Paint();
         paint.setColor(Color.WHITE);
     }

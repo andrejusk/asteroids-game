@@ -16,7 +16,7 @@ class Asteroid extends MotionObject {
     float rotationMultiplier;
     float rotation;
 
-    Asteroid(Asteroid parent, PlayerBullet playerBullet, boolean side) {
+    Asteroid(Asteroid parent, MotionObject target, boolean side) {
         this(parent.canvasWidth, parent.canvasHeight, parent.bitmap);
 
         /* Inherit position */
@@ -32,13 +32,13 @@ class Asteroid extends MotionObject {
             this.exitedBounds = true;
         }
         parent.exitedBounds = true;
-        playerBullet.exitedBounds = true;
+        target.exitedBounds = true;
 
         /* Rotate */
         if (side) {
-            this.angle = playerBullet.angle + 90;
+            this.angle = target.angle + 90;
         } else {
-            this.angle = playerBullet.angle - 90;
+            this.angle = target.angle - 90;
         }
 
     }
