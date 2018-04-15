@@ -8,7 +8,7 @@ import android.graphics.Paint;
 
 class PlayerBullet extends MotionObject {
 
-    final static int bulletSize = 5;
+    final static int bulletSize = 10;
 
     final static double bulletVelocity = 10;
 
