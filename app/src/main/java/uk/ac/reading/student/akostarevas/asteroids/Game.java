@@ -35,6 +35,9 @@ public class Game extends GameThread {
     /* Score values */
     private final static long asteroidPoints = 100;
 
+    /* Lives */
+    private int lives;
+
     /**
      * Set up game.
      *
@@ -68,6 +71,9 @@ public class Game extends GameThread {
         /* Create Player and MotionObjects */
         player = new Player(canvasWidth, canvasHeight, playerNormal, playerThrust);
         objects = new ArrayList<>();
+
+        /* Default lives */
+        lives = 3;
     }
 
     @Override
@@ -81,7 +87,7 @@ public class Game extends GameThread {
         super.draw(canvas);
 
         /* Don't draw if waiting */
-        if (super.gameState == STATE.MENU) {
+        if (super.gameState != STATE.RUNNING) {
             return;
         }
 
@@ -213,25 +219,31 @@ public class Game extends GameThread {
 
         /* Check collisions */
         for (int i = 0; i < objects.size(); i++) {
+            /* Get object */
+            MotionObject object = objects.get(i);
+
+            /* If Player hits Asteroid */
+            if (object instanceof Asteroid && collides(player, object)) {
+                if (lives > 0) {
+                    lives--;
+                    super.setState(STATE.DEAD);
+                } else {
+                    super.setState(STATE.FINISH);
+                }
+            }
+
+            /* If object collides any other object */
             for (int j = 0; j < objects.size(); j++) {
-                if (objects.get(i) instanceof Asteroid && objects.get(j) instanceof Asteroid) {
-                    //two asteroids - ignore
-                    //TODO: split both of them? grow maybe?
-                }
-                else if (objects.get(i) instanceof PlayerBullet && objects.get(j) instanceof Player) {
-                    //player and bullet - ignore
-                }
-                else if (objects.get(i) instanceof Player && objects.get(j) instanceof Asteroid) {
-                    //TODO: rip player
-                }
-                else if (collides(objects.get(i), objects.get(j))) {
-                    if (objects.get(i) instanceof PlayerBullet && objects.get(j) instanceof Asteroid) {
-                        /* Copy references */
-                        PlayerBullet playerBullet = (PlayerBullet) objects.get(i);
-                        Asteroid asteroid = (Asteroid) objects.get(j);
+                /* Get target */
+                MotionObject target = objects.get(j);
+
+                /* Check collision */
+                if (collides(object, target)) {
+                    /* PlayerBullet hits Asteroid */
+                    if (object instanceof PlayerBullet && target instanceof Asteroid) {
                         /* Replace with new Asteroid objects */
-                        objects.set(i, new Asteroid(asteroid, playerBullet, true));
-                        objects.add(j, new Asteroid(asteroid, playerBullet, false));
+                        objects.set(i, new Asteroid((Asteroid) target, object, true));
+                        objects.set(j, new Asteroid((Asteroid) target, object, false));
                         /* Increment score */
                         super.increaseScore(asteroidPoints);
                     }
@@ -264,10 +276,10 @@ public class Game extends GameThread {
         if (object == target) {
             return false;
         }
-        /* Returns if distance is less than sizes */
+        /* Returns if distance is less than radii */
         return
                 (Math.pow(object.x - target.x, 2) + Math.pow(object.y - target.y, 2))
-                < Math.pow(object.size + target.size, 2);
+                < Math.pow(object.size / 2 + target.size / 2, 2);
     }
 
 }
