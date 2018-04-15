@@ -17,4 +17,10 @@
     <string name="button_scores">High Scores</string>
     <string name="button_help">Guide</string>
     <string name="score_name">Enter name</string>
+
+    <string name="popup_guide">Use left joystick to point ship, blue button to thrust, red button to fire. Dodge asteroids and shoot them for points!</string>
+    <string name="popup_score">Loading scoreboard.</string>
+    <string name="diff_easy">Easy</string>
+    <string name="diff_med">Medium</string>
+    <string name="diff_hard">Hard</string>
 </resources>
