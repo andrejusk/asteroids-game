@@ -22,14 +22,14 @@ public class Game extends GameThread {
     private PlayerInput thrust, shoot;
 
     /* Game Bitmaps */
-    private final Bitmap playerNormal, playerThrust, asteroid;
+    private final Bitmap playerNormal, playerThrust, asteroid, bullet;
 
     /* Player control locations */ //TODO: figure out better way of doing this
     private final static float joyX = (float) (1.0 / 3.0);
     private final static float joyY = (float) (2.0 / 3.0);
     private final static float thrustX = (float) (0.70);
     private final static float thrustY = (float) (0.75);
-    private final static float shootX = (float) (2.5 / 3.0);
+    private final static float shootX = (float) (2.6 / 3.0);
     private final static float shootY = (float) (2.0 / 3.0);
 
     /* Score values */
@@ -56,6 +56,9 @@ public class Game extends GameThread {
         asteroid = BitmapFactory.decodeResource(
                 gameView.getContext().getResources(),
                 R.drawable.asteroid);
+        bullet = BitmapFactory.decodeResource(
+                gameView.getContext().getResources(),
+                R.drawable.asteroid);
     }
 
     /**
@@ -65,8 +68,10 @@ public class Game extends GameThread {
     public void setupBeginning() {
         /* Create controls */
         createJoystick(canvasWidth * joyX, canvasHeight * joyY);
-        thrust = new PlayerInput(canvasWidth * thrustX, canvasHeight * thrustY, PlayerInput.TYPE.THRUST);
-        shoot = new PlayerInput(canvasWidth * shootX, canvasHeight * shootY, PlayerInput.TYPE.SHOOT);
+        thrust = new PlayerInput(canvasWidth * thrustX, canvasHeight * thrustY,
+                canvasWidth, canvasHeight, PlayerInput.TYPE.THRUST);
+        shoot = new PlayerInput(canvasWidth * shootX, canvasHeight * shootY,
+                canvasWidth, canvasHeight, PlayerInput.TYPE.SHOOT);
 
         /* Create Player and MotionObjects */
         player = new Player(canvasWidth, canvasHeight, playerNormal, playerThrust);
@@ -107,7 +112,7 @@ public class Game extends GameThread {
     }
 
     private void createJoystick(float x, float y) {
-        joystick = new PlayerInput(x, y, PlayerInput.TYPE.JOYSTICK);
+        joystick = new PlayerInput(x, y, canvasWidth, canvasHeight, PlayerInput.TYPE.JOYSTICK);
     }
 
 
@@ -133,8 +138,12 @@ public class Game extends GameThread {
                 player.thrusting = false;
                 thrust.active = false;
             }
+            /* If thrust finger */
+            else if (shoot.isPointer(pointerId)) {
+                shoot.active = false;
+            }
             /* If joystick finger */
-            if (joystick.isPointer(pointerId)) {
+            else if (joystick.isPointer(pointerId)) {
                 joystick.active = false;
             }
         }
@@ -150,7 +159,7 @@ public class Game extends GameThread {
                 if (joystick.isPointer(pointerId)) {
                     x = e.getX(pointerIndex);
                     y = e.getY(pointerIndex);
-                    GameObject target = new GameObject(x, y);
+                    Object target = new Object(x, y);
                     player.updateAngle(joystick, target);
                 }
             }
@@ -174,7 +183,9 @@ public class Game extends GameThread {
                 }
                 /* Shoot button */
                 else if (shoot.isAffected(x, y)) {
-                    PlayerBullet bullet = new PlayerBullet(player);
+                    shoot.pointerId = pointerId;
+                    shoot.active = true;
+                    PlayerBullet bullet = new PlayerBullet(player, this.bullet);
                     objects.add(bullet);
                 }
             }
@@ -252,9 +263,9 @@ public class Game extends GameThread {
             }
         }
 
+        /* Clean up memory */
         int count = objects.size();
         int iterator = 0;
-
         while (iterator < count) {
             if (objects.get(iterator).exitedBounds) {
                 objects.remove(iterator);

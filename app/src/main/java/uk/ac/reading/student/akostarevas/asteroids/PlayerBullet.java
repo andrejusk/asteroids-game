@@ -1,29 +1,21 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 
-public class PlayerBullet extends MotionObject {
+class PlayerBullet extends MotionObject {
 
-    final static int bulletSize = 5;
+    final static int bulletSize = 10;
 
-    final static int bulletVelocity = 10;
-    final Paint paint;
+    final static double bulletVelocity = 10;
 
-    PlayerBullet(Player player) {
-        super(player.x + player.size / 2, player.y + player.size / 2,
+    PlayerBullet(Player player, Bitmap bitmap) {
+        super(player.x + player.size / 2, player.y + player.size / 2, bulletSize,
                 player.canvasWidth, player.canvasHeight,
-                player.thrustAngle, bulletVelocity, true);
-
-        this.size = bulletSize;
-        paint = new Paint();
-        paint.setColor(Color.WHITE);
-    }
-
-    @Override
-    void draw(Canvas canvas) {
-        canvas.drawCircle(x, y, size, paint);
+                new Vector(bulletVelocity, player.thrustAngle), true, bitmap);
     }
 
 }

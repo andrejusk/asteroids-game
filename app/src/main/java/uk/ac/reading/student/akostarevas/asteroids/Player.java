@@ -9,7 +9,7 @@ import android.graphics.Paint;
 class Player extends MotionObject {
 
     private final static float angleMultiplier = 100;
-    private final static float thrustSpeed = (float) 0.15;
+    private final static double thrustSpeed = (float) 0.15;
 
     private final static int directionMultiplier = 5;
 
@@ -18,7 +18,6 @@ class Player extends MotionObject {
     private final static float playerScale = 16;
 
     private final Bitmap normal, thrust;
-    private final Paint noAA;
 
     float thrustAngle;
 
@@ -27,7 +26,7 @@ class Player extends MotionObject {
     boolean thrusting;
 
     Player(int canvasWidth, int canvasHeight, Bitmap normal, Bitmap thrust) {
-        super(canvasWidth / 2, canvasHeight / 2, canvasWidth, canvasHeight);
+        super(canvasWidth / 2, canvasHeight / 2, ((float) canvasHeight) / playerScale, canvasWidth, canvasHeight, normal);
 
         turningLeft = false;
         turningRight = false;
@@ -35,19 +34,11 @@ class Player extends MotionObject {
         thrustAngle = 0;
         thrusting = false;
 
-        this.size = ((float) canvasHeight) / playerScale;
-
         this.normal = Bitmap.createScaledBitmap(normal, (int) size, (int) size, false);
         this.thrust = Bitmap.createScaledBitmap(thrust, (int) size, (int) size, false);
-
-        /* No anti-alias scaling */
-        noAA = new Paint();
-        noAA.setAntiAlias(false);
-        noAA.setFilterBitmap(false);
-        noAA.setDither(false);
     }
 
-    void updateAngle(GameObject reference, GameObject target) {
+    void updateAngle(Object reference, Object target) {
 
         double xVector = target.x - reference.x;
         double yVector = target.y - reference.y;
@@ -62,7 +53,6 @@ class Player extends MotionObject {
     }
 
     void move(float secondsElapsed) {
-
         /* Turning */
         if (turningLeft) {
             this.thrustAngle -= secondsElapsed * angleMultiplier;
@@ -73,33 +63,10 @@ class Player extends MotionObject {
 
         /* Movement */
         if (thrusting) {
-
-            /* Cross product vectors */
-            double movementAngleRadians = (angle / 180.0 * Math.PI);
-            double xMove = (velocity) * Math.sin(movementAngleRadians);
-            double yMove = (velocity) * Math.cos(movementAngleRadians);
-
-            double thrustAngleRadians = (thrustAngle / 180.0 * Math.PI);
-            double xThrust = (thrustSpeed) * Math.sin(thrustAngleRadians);
-            double yThrust = (thrustSpeed) * Math.cos(thrustAngleRadians);
-
-            double xFinal = xMove + xThrust;
-            double yFinal = yMove + yThrust;
-
-            /* Sum of squares */
-            velocity = (float) Math.sqrt(Math.pow(xFinal, 2) + Math.pow(yFinal, 2));
-
-            if (velocity > maxVelocity) {
-                velocity = maxVelocity;
+            motion = Vector.multiply(motion, new Vector(thrustSpeed, thrustAngle));
+            if (motion.velocity > maxVelocity) {
+                motion.setVelocity(maxVelocity);
             }
-
-            /* Quick maths */
-            angle = (float) (Math.atan(xFinal / yFinal) * 180.0 / Math.PI);
-
-            if (yFinal < 0) {
-                angle = 180 + angle;
-            }
-
         }
 
         super.move(secondsElapsed);
@@ -119,29 +86,19 @@ class Player extends MotionObject {
 
     private void drawPlayer(Canvas canvas, float x, float y) {
         /* Select correct bitmap */
-        Bitmap bitmap = (thrusting) ? thrust : normal;
+        this.bitmap = (thrusting) ? thrust : normal;
 
-        /* Rotate player */
-        Matrix matrix = new Matrix();
-        matrix.postTranslate(-bitmap.getWidth()/2, -bitmap.getHeight()/2);
-        matrix.postRotate(180 - thrustAngle);
-        matrix.postTranslate(x + (float) (size / 2.0), y + (float) (size / 2.0));
+        float tempX = this.x;
+        float tempY = this.y;
+
+        this.x = x;
+        this.y = y;
 
         /* Draw main player */
-        canvas.drawBitmap(bitmap, matrix, noAA);
-    }
+        super.draw(canvas, thrustAngle);
 
-    void debugDraw(Canvas canvas) {
-        canvas.drawText(String.valueOf(thrusting), x + 50, y + 150, debugPaint);
-        canvas.drawText(String.valueOf(thrustAngle), x + 50, y + 200, debugPaint);
-
-        double thrustAngleRadians = (thrustAngle * Math.PI / 180.0);
-        double xThrust = (directionMultiplier * tailMultiplier) * Math.sin(thrustAngleRadians);
-        double yThrust = (directionMultiplier * tailMultiplier) * Math.cos(thrustAngleRadians);
-
-        canvas.drawLine(x, y, (float) (x + xThrust), (float) (y + yThrust), debugPaint);
-
-        super.draw(canvas);
+        this.x = tempX;
+        this.y = tempY;
     }
 
 }
