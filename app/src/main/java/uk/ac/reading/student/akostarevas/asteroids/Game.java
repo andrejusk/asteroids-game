@@ -138,8 +138,12 @@ public class Game extends GameThread {
                 player.thrusting = false;
                 thrust.active = false;
             }
+            /* If thrust finger */
+            else if (shoot.isPointer(pointerId)) {
+                shoot.active = false;
+            }
             /* If joystick finger */
-            if (joystick.isPointer(pointerId)) {
+            else if (joystick.isPointer(pointerId)) {
                 joystick.active = false;
             }
         }
@@ -179,6 +183,8 @@ public class Game extends GameThread {
                 }
                 /* Shoot button */
                 else if (shoot.isAffected(x, y)) {
+                    shoot.pointerId = pointerId;
+                    shoot.active = true;
                     PlayerBullet bullet = new PlayerBullet(player, this.bullet);
                     objects.add(bullet);
                 }
@@ -257,9 +263,9 @@ public class Game extends GameThread {
             }
         }
 
+        /* Clean up memory */
         int count = objects.size();
         int iterator = 0;
-
         while (iterator < count) {
             if (objects.get(iterator).exitedBounds) {
                 objects.remove(iterator);

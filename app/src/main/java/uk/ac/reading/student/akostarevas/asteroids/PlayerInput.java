@@ -47,6 +47,11 @@ class PlayerInput extends GameObject {
 
     @Override
     void draw(Canvas canvas) {
+        if (active) {
+            controllerPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        } else {
+            controllerPaint.setStyle(Paint.Style.STROKE);
+        }
         canvas.drawCircle(x, y, this.size, controllerPaint);
     }
 
