@@ -88,8 +88,17 @@ class Player extends MotionObject {
         /* Select correct bitmap */
         this.bitmap = (thrusting) ? thrust : normal;
 
+        float tempX = this.x;
+        float tempY = this.y;
+
+        this.x = x;
+        this.y = y;
+
         /* Draw main player */
         super.draw(canvas, thrustAngle);
+
+        this.x = tempX;
+        this.y = tempY;
     }
 
 }
