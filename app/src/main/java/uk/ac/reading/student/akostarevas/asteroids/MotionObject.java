@@ -1,25 +1,17 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
-import android.graphics.Canvas;
-
 /**
  * Extends GameObject.
  * Allows movement.
  */
-class MotionObject extends GameObject {
+abstract class MotionObject extends GameObject {
 
     /* Physics variables */
-    final static int tailMultiplier = 10;
     private final static int speedMultiplier = 100;
     private final static int dropOffDivisor = 100;
 
-    /* Keep track of canvas */
-    int canvasWidth;
-    int canvasHeight;
-
     /* Angle in degrees */
-    float angle;
-    float velocity;
+    Vector motion;
 
     /* Special flags */
     private boolean warp;
@@ -27,36 +19,48 @@ class MotionObject extends GameObject {
     boolean exitedBounds = false;
 
     MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight) {
-        this(x, y, size, canvasWidth, canvasHeight, 0, 0, false);
+        this(x, y, size, canvasWidth, canvasHeight, new Vector(), false);
     }
 
-    MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight, float angle, float velocity, boolean enteringBounds) {
-        super(x, y, size);
+    MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight, Vector motion, boolean enteringBounds) {
+        super(x, y, size, canvasWidth, canvasHeight);
 
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
-        this.angle = angle;
-        this.velocity = velocity;
+        this.motion = motion;
         this.enteringBounds = enteringBounds;
         this.warp = !enteringBounds;
     }
 
+    /**
+     * Updates drop-off, moves object and checks bounds.
+     * @param secondsElapsed Seconds elapsed.
+     */
     void move(float secondsElapsed) {
         /* Update velocity with drop off */
-        velocity -= Math.pow(velocity, 2) * secondsElapsed / dropOffDivisor;
-
-        /* Calculate displacement */
-        double angleRadians = (angle / 180.0 * Math.PI);
-        double speed = velocity * speedMultiplier;
-        double xDisplace = speed * Math.sin(angleRadians) * secondsElapsed;
-        double yDisplace = speed * Math.cos(angleRadians) * secondsElapsed;
+        updateDropOff(secondsElapsed);
 
         /* Apply displacement */
-        double xRaw = x + xDisplace;
-        double yRaw = y + yDisplace;
+        x += motion.getX() * secondsElapsed * speedMultiplier;
+        y += motion.getY() * secondsElapsed * speedMultiplier;
 
+        /* Check bounds and/or warp */
+        checkBounds();
+    }
+
+    /**
+     * Updates velocity with drop-off.
+     * @param secondsElapsed Seconds elapsed.
+     */
+    private void updateDropOff(float secondsElapsed) {
+        double dropOff = Math.pow(motion.getVelocity(), 2) * secondsElapsed / dropOffDivisor;
+        motion.updateVelocity(0 - dropOff);
+    }
+
+    /**
+     * Checks bounds and/or warps depending on flags.
+     */
+    private void checkBounds() {
         /* If out of bounds */
-        if (!inBounds(xRaw, yRaw)) {
+        if (!inBounds(x, y)) {
             /* If wasn't placed out of bounds */
             if (!enteringBounds) {
                 exitedBounds = true;
@@ -64,7 +68,7 @@ class MotionObject extends GameObject {
         }
 
         /* If within bounds */
-        if (inBounds(xRaw, yRaw)) {
+        if (inBounds(x, y)) {
             /* If started out of bounds */
             if (enteringBounds) {
                 enteringBounds = false;
@@ -73,44 +77,13 @@ class MotionObject extends GameObject {
 
         if (warp) {
             /* Warp bottom and right */
-            xRaw = xRaw % canvasWidth;
-            yRaw = yRaw % canvasHeight;
+            x %= canvasWidth;
+            y %= canvasHeight;
 
             /* Warp top and left */
-            xRaw = (xRaw < 0) ? xRaw + canvasWidth : xRaw;
-            yRaw = (yRaw < 0) ? yRaw + canvasHeight : yRaw;
+            x = (x < 0) ? x + canvasWidth : x;
+            y = (y < 0) ? y + canvasHeight : y;
         }
-
-        x = (float) xRaw;
-        y = (float) yRaw;
-    }
-
-    @Override
-    void draw(Canvas canvas) {
-        double angleRadians = (angle / 180.0 * Math.PI);
-
-        double xSpeed = (velocity * tailMultiplier) * Math.sin(angleRadians);
-        double ySpeed = (velocity * tailMultiplier) * Math.cos(angleRadians);
-
-        canvas.drawLine(x, y, (float) (x - xSpeed), (float) (y - ySpeed), debugPaint);
-
-        canvas.drawText(String.valueOf(angle), x + 50, y + 50, debugPaint);
-        canvas.drawText(String.valueOf(velocity), x + 50, y + 100, debugPaint);
-
-        super.draw(canvas);
-    }
-
-    boolean inBounds(double x, double y) {
-        return inBounds(x, y, this.canvasWidth, this.canvasHeight, this.size);
-    }
-
-    private static boolean inBounds(double x, double y, int canvasWidth, int canvasHeight, float size) {
-        return (
-                (x) <= canvasWidth &&
-                (x + size) >= 0 &&
-                (y) <= canvasHeight &&
-                (y + size) >= 0
-        );
     }
 
 }

@@ -1,15 +1,18 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
 /**
- * Abstract Object.
- * Data structure with x, y, size.
+ * Object class.
+ * Data structure with x, y and size.
  */
-abstract class Object {
+class Object {
 
     float size;
-
     float x;
     float y;
+
+    Object(float x, float y) {
+        this(x, y, 0);
+    }
 
     Object(float x, float y, float size) {
         this.x = x;

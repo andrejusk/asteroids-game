@@ -16,8 +16,8 @@ class PlayerInput extends GameObject {
     boolean active;
     int pointerId;
 
-    PlayerInput(float x, float y, TYPE type) {
-        super(x, y, 10);
+    PlayerInput(float x, float y, int canvasWidth, int canvasHeight, TYPE type) {
+        super(x, y, canvasHeight / 100, canvasWidth, canvasHeight);
 
         active = false;
         pointerId = -1;
@@ -43,13 +43,6 @@ class PlayerInput extends GameObject {
 
         controllerPaint.setAlpha(100);
 
-    }
-
-    void debugDraw(Canvas canvas) {
-        super.draw(canvas);
-
-        canvas.drawText(String.valueOf(active), x + 50, y + 50, debugPaint);
-        canvas.drawText(String.valueOf(pointerId), x + 50, y + 100, debugPaint);
     }
 
     @Override

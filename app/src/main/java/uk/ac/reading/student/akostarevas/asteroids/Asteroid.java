@@ -27,54 +27,44 @@ class Asteroid extends MotionObject {
         this.size = parent.size / 2;
         this.bitmap = Bitmap.createScaledBitmap(bitmap, (int) this.size, (int) this.size, false);
 
+        /* Rotate */
+        if (side) {
+            this.motion.angleDegrees = target.motion.angleDegrees + 90;
+        } else {
+            this.motion.angleDegrees = target.motion.angleDegrees - 90;
+        }
+
         /* De-spawn if needed */
         if (this.size < canvasHeight / 32) {
             this.exitedBounds = true;
         }
         parent.exitedBounds = true;
         target.exitedBounds = true;
-
-        /* Rotate */
-        if (side) {
-            this.angle = target.angle + 90;
-        } else {
-            this.angle = target.angle - 90;
-        }
-
     }
 
     Asteroid(int canvasWidth, int canvasHeight, Bitmap bitmap) {
-        super(0, 0, canvasHeight / 8, canvasWidth, canvasHeight, 0, 0, true);
+        super(0, 0, canvasHeight / 8,
+                canvasWidth, canvasHeight, new Vector(), true);
 
         Random random = new Random();
 
-        /* Random point outside bounds */
-        float startX, startY;
+        /* Random starting point outside bounds */
         do {
-            startX = random.nextFloat() * (2 * canvasWidth) - canvasWidth / 2;
-            startY = random.nextFloat() * (2 * canvasHeight) - canvasHeight / 2;
-        } while(inBounds(startX, startY));
+            x = random.nextFloat() * (2 * canvasWidth) - canvasWidth / 2;
+            y = random.nextFloat() * (2 * canvasHeight) - canvasHeight / 2;
+        } while(inBounds());
 
-        /* Random point in centre of bounds */
-        float targetX = random.nextFloat() * (canvasWidth / 2) + canvasWidth / 4;
-        float targetY = random.nextFloat() * (canvasHeight / 2) + canvasHeight / 4;
+        /* Random point in centre of bounds as target */
+        Object target = new Object(
+                random.nextFloat() * (canvasWidth / 2) + canvasWidth / 4,
+                random.nextFloat() * (canvasHeight / 2) + canvasHeight / 4
+        );
 
-        /* Apply start position */
-        this.x = startX;
-        this.y = startY;
+        /* Generate motion */
+        motion = new Vector(this, target);
+        motion.setVelocity(random.nextFloat() * 3 + 2);
 
-        /* Apply angle */
-        double xVector = targetX - startX;
-        double yVector = targetY - startY;
-
-        angle = (float) (Math.atan(xVector / yVector) * 180.0 / Math.PI);
-        if (yVector < 0) {
-            angle = 180 + angle;
-        }
-
-        /* Random speed */
-        velocity = random.nextFloat() * 3 + 2;
-
+        /* Scale bitmap */
         this.bitmap = Bitmap.createScaledBitmap(bitmap, (int) this.size, (int) this.size, false);
 
         /* Random rotation */
@@ -97,19 +87,12 @@ class Asteroid extends MotionObject {
 
         /* Rotate player */
         Matrix matrix = new Matrix();
-        matrix.postTranslate(-bitmap.getWidth()/2, -bitmap.getHeight()/2);
+        matrix.postTranslate(-bitmap.getWidth() / 2, -bitmap.getHeight() / 2);
         matrix.postRotate(180 - rotation);
         matrix.postTranslate(x + (float) (size / 2.0), y + (float) (size / 2.0));
 
         /* Draw main player */
         canvas.drawBitmap(bitmap, matrix, noAA);
-    }
-
-    void debugDraw(Canvas canvas) {
-        if (exitedBounds) {
-            return;
-        }
-        super.draw(canvas);
     }
 
     @Override

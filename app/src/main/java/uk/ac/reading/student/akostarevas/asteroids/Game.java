@@ -65,8 +65,10 @@ public class Game extends GameThread {
     public void setupBeginning() {
         /* Create controls */
         createJoystick(canvasWidth * joyX, canvasHeight * joyY);
-        thrust = new PlayerInput(canvasWidth * thrustX, canvasHeight * thrustY, PlayerInput.TYPE.THRUST);
-        shoot = new PlayerInput(canvasWidth * shootX, canvasHeight * shootY, PlayerInput.TYPE.SHOOT);
+        thrust = new PlayerInput(canvasWidth * thrustX, canvasHeight * thrustY,
+                canvasWidth, canvasHeight, PlayerInput.TYPE.THRUST);
+        shoot = new PlayerInput(canvasWidth * shootX, canvasHeight * shootY,
+                canvasWidth, canvasHeight, PlayerInput.TYPE.SHOOT);
 
         /* Create Player and MotionObjects */
         player = new Player(canvasWidth, canvasHeight, playerNormal, playerThrust);
@@ -107,7 +109,7 @@ public class Game extends GameThread {
     }
 
     private void createJoystick(float x, float y) {
-        joystick = new PlayerInput(x, y, PlayerInput.TYPE.JOYSTICK);
+        joystick = new PlayerInput(x, y, canvasWidth, canvasHeight, PlayerInput.TYPE.JOYSTICK);
     }
 
 
@@ -150,7 +152,7 @@ public class Game extends GameThread {
                 if (joystick.isPointer(pointerId)) {
                     x = e.getX(pointerIndex);
                     y = e.getY(pointerIndex);
-                    GameObject target = new GameObject(x, y, 0);
+                    Object target = new Object(x, y);
                     player.updateAngle(joystick, target);
                 }
             }
