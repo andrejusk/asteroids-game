@@ -2,6 +2,10 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.graphics.Canvas;
 
+/**
+ * Extends GameObject.
+ * Allows movement.
+ */
 class MotionObject extends GameObject {
 
     /* Physics variables */
@@ -22,12 +26,13 @@ class MotionObject extends GameObject {
     private boolean enteringBounds;
     boolean exitedBounds = false;
 
-    MotionObject(float x, float y, int canvasWidth, int canvasHeight) {
-        this(x, y, canvasWidth, canvasHeight, 0, 0, false);
+    MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight) {
+        this(x, y, size, canvasWidth, canvasHeight, 0, 0, false);
     }
 
-    MotionObject(float x, float y, int canvasWidth, int canvasHeight, float angle, float velocity, boolean enteringBounds) {
-        super(x, y);
+    MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight, float angle, float velocity, boolean enteringBounds) {
+        super(x, y, size);
+
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.angle = angle;

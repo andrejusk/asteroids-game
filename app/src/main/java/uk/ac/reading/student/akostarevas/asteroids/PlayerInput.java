@@ -16,10 +16,8 @@ class PlayerInput extends GameObject {
     boolean active;
     int pointerId;
 
-    private float controllerSize;
-
     PlayerInput(float x, float y, TYPE type) {
-        super(x, y);
+        super(x, y, 10);
 
         active = false;
         pointerId = -1;
@@ -28,19 +26,17 @@ class PlayerInput extends GameObject {
         controllerPaint.setStyle(Paint.Style.STROKE);
         controllerPaint.setStrokeWidth(10);
 
-        controllerSize = size;
-
         switch (type) {
             case THRUST:
-                controllerSize *= 15;
+                this.size *= 15;
                 controllerPaint.setColor(Color.CYAN);
                 break;
             case SHOOT:
-                controllerSize *= 15;
+                this.size *= 15;
                 controllerPaint.setColor(Color.RED);
                 break;
             case JOYSTICK:
-                controllerSize *= 30;
+                this.size *= 30;
                 controllerPaint.setColor(Color.WHITE);
                 break;
         }
@@ -58,7 +54,7 @@ class PlayerInput extends GameObject {
 
     @Override
     void draw(Canvas canvas) {
-        canvas.drawCircle(x, y, controllerSize, controllerPaint);
+        canvas.drawCircle(x, y, this.size, controllerPaint);
     }
 
     boolean isAffected(float x, float y) {
@@ -67,7 +63,7 @@ class PlayerInput extends GameObject {
 
         double dif = Math.sqrt(Math.pow(difX, 2) + Math.pow(difY, 2));
 
-        return (dif < controllerSize);
+        return (dif < this.size);
     }
 
     boolean isPointer(int pointerId) {

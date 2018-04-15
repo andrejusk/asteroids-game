@@ -150,7 +150,7 @@ public class Game extends GameThread {
                 if (joystick.isPointer(pointerId)) {
                     x = e.getX(pointerIndex);
                     y = e.getY(pointerIndex);
-                    GameObject target = new GameObject(x, y);
+                    GameObject target = new GameObject(x, y, 0);
                     player.updateAngle(joystick, target);
                 }
             }

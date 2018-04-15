@@ -44,12 +44,9 @@ class Asteroid extends MotionObject {
     }
 
     Asteroid(int canvasWidth, int canvasHeight, Bitmap bitmap) {
-        super(0, 0, canvasWidth, canvasHeight, 0, 0, true);
+        super(0, 0, canvasHeight / 8, canvasWidth, canvasHeight, 0, 0, true);
 
         Random random = new Random();
-
-        /* Size for inBounds() */
-        this.size = canvasHeight / 8;
 
         /* Random point outside bounds */
         float startX, startY;

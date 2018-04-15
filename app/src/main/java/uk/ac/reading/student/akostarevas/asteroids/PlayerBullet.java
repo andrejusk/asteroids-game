@@ -12,11 +12,10 @@ public class PlayerBullet extends MotionObject {
     final Paint paint;
 
     PlayerBullet(Player player) {
-        super(player.x + player.size / 2, player.y + player.size / 2,
+        super(player.x + player.size / 2, player.y + player.size / 2, bulletSize,
                 player.canvasWidth, player.canvasHeight,
                 player.thrustAngle, bulletVelocity, true);
 
-        this.size = bulletSize;
         paint = new Paint();
         paint.setColor(Color.WHITE);
     }

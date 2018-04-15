@@ -4,17 +4,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-class GameObject {
-
-    float size = 10;
-    float x;
-    float y;
+/**
+ * Extends Object.
+ * Allows drawing.
+ */
+class GameObject extends Object {
 
     Paint debugPaint;
 
-    GameObject(float x, float y) {
-        this.x = x;
-        this.y = y;
+    GameObject(float x, float y, float size) {
+        super(x, y, size);
+
         debugPaint = new Paint();
         debugPaint.setTextSize(45);
         debugPaint.setColor(Color.GREEN);

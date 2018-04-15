@@ -27,15 +27,13 @@ class Player extends MotionObject {
     boolean thrusting;
 
     Player(int canvasWidth, int canvasHeight, Bitmap normal, Bitmap thrust) {
-        super(canvasWidth / 2, canvasHeight / 2, canvasWidth, canvasHeight);
+        super(canvasWidth / 2, canvasHeight / 2, ((float) canvasHeight) / playerScale, canvasWidth, canvasHeight);
 
         turningLeft = false;
         turningRight = false;
 
         thrustAngle = 0;
         thrusting = false;
-
-        this.size = ((float) canvasHeight) / playerScale;
 
         this.normal = Bitmap.createScaledBitmap(normal, (int) size, (int) size, false);
         this.thrust = Bitmap.createScaledBitmap(thrust, (int) size, (int) size, false);
@@ -47,7 +45,7 @@ class Player extends MotionObject {
         noAA.setDither(false);
     }
 
-    void updateAngle(GameObject reference, GameObject target) {
+    void updateAngle(Object reference, Object target) {
 
         double xVector = target.x - reference.x;
         double yVector = target.y - reference.y;
