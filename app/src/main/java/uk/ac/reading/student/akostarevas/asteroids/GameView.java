@@ -9,6 +9,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -24,6 +25,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Button scores;
     Button diff;
     Button guide;
+
+    EditText name;
     /* GameThread and communication handler */
     private volatile GameThread thread;
 
@@ -37,7 +40,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void setup() {
         /* Set up a handler for messages from GameThread */
-        handler = new GameHandler(scoreView, liveView, statusView, scores, diff, guide);
+        handler = new GameHandler(scoreView, liveView, statusView, scores, diff, guide, name);
     }
 
     /**

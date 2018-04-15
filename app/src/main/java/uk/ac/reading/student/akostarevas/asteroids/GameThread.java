@@ -187,6 +187,12 @@ public abstract class GameThread extends Thread {
             }
             if (gameState == STATE.FINISH) {
                 //TODO: Save score, go to STATE.MENU
+                Message msg = handler.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("submit", true);
+                msg.setData(bundle);
+                handler.sendMessage(msg);
+                setState(STATE.MENU);
                 return true;
             }
             if (gameState == STATE.PAUSE) {

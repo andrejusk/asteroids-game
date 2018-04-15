@@ -16,4 +16,5 @@
     <string name="button_difficulty">Difficulty</string>
     <string name="button_scores">High Scores</string>
     <string name="button_help">Guide</string>
+    <string name="score_name">Enter name</string>
 </resources>

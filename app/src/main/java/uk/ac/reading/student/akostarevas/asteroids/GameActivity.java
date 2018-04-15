@@ -39,6 +39,9 @@ public class GameActivity extends AppCompatActivity {
         gameView.scores = findViewById(R.id.button_scores);
         gameView.diff = findViewById(R.id.button_difficulty);
         gameView.guide = findViewById(R.id.button_help);
+
+        gameView.name = findViewById(R.id.score_name);
+
         gameView.setup();
 
         this.startGame(savedInstanceState);

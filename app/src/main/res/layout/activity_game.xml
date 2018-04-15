@@ -14,6 +14,7 @@
 
         <TextView
             android:id="@+id/score"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -22,11 +23,11 @@
             android:text="@string/score_text"
             android:textColor="#ffffffff"
             android:textSize="24sp"
-            android:visibility="visible"
             android:layout_alignParentEnd="true" />
 
         <TextView
             android:id="@+id/lives"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -35,7 +36,6 @@
             android:text="@string/score_lives"
             android:textColor="#ffffffff"
             android:textSize="24sp"
-            android:visibility="visible"
             android:layout_alignParentStart="true" />
 
         <TextView
@@ -82,6 +82,19 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="110dp"
             android:text="@string/button_help" />
+
+        <EditText
+            android:id="@+id/score_name"
+            android:visibility="gone"
+            android:textColor="#ffffff"
+            android:background="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/score"
+            android:layout_centerHorizontal="true"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="@string/score_name" />
 
     </RelativeLayout>
 </FrameLayout>
