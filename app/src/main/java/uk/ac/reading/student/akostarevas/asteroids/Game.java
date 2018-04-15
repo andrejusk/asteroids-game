@@ -26,6 +26,8 @@ public class Game extends GameThread {
     private final static float shootX = (float) (2.5 / 3.0);
     private final static float shootY = (float) (2.0 / 3.0);
 
+    private final static long asteroidPoints = 100;
+
     private final Bitmap playerNormal, playerThrust, asteroid;
 
     private Player player;
@@ -197,16 +199,70 @@ public class Game extends GameThread {
      */
     @Override
     protected void updateGame(float secondsElapsed) {
+        /* Move player */
         player.move(secondsElapsed);
 
-        Random random = new Random();
-        if (random.nextFloat() < 0.02) {
-            objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
-        }
-
+        /* Move objects */
         for (MotionObject object : objects) {
             object.move(secondsElapsed);
         }
+
+        /* Check collisions */
+        for (int i = 0; i < objects.size(); i++) {
+            for (int j = 0; j < objects.size(); j++) {
+                if (objects.get(i) instanceof Asteroid && objects.get(j) instanceof Asteroid) {
+                    //two asteroids - ignore
+                    //TODO: split both of them? grow maybe?
+                }
+                else if (objects.get(i) instanceof PlayerBullet && objects.get(j) instanceof Player) {
+                    //player and bullet - ignore
+                }
+                else if (objects.get(i) instanceof Player && objects.get(j) instanceof Asteroid) {
+                    //TODO: rip player
+                }
+                else if (collides(objects.get(i), objects.get(j))) {
+                    if (objects.get(i) instanceof PlayerBullet && objects.get(j) instanceof Asteroid) {
+                        /* Copy references */
+                        PlayerBullet playerBullet = (PlayerBullet) objects.get(i);
+                        Asteroid asteroid = (Asteroid) objects.get(j);
+                        /* Replace with new Asteroid objects */
+                        objects.set(i, new Asteroid(asteroid, playerBullet, true));
+                        objects.add(j, new Asteroid(asteroid, playerBullet, false));
+                        /* Increment score */
+                        super.increaseScore(asteroidPoints);
+                    }
+                }
+            }
+        }
+
+        int count = objects.size();
+        int iterator = 0;
+
+        while (iterator < count) {
+            if (objects.get(iterator).exitedBounds) {
+                objects.remove(iterator);
+                count--;
+            } else {
+                iterator++;
+            }
+        }
+
+        /* Create objects */
+        Random random = new Random(Double.doubleToLongBits(Math.random()));
+        if (random.nextFloat() < 0.01) {
+            objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
+        }
+
+    }
+
+    private boolean collides(MotionObject object, MotionObject target) {
+        /* Ignore self */
+        if (object == target) {
+            return false;
+        }
+        return
+                (Math.pow(object.x - target.x, 2) + Math.pow(object.y - target.y, 2))
+                < Math.pow(object.size + target.size, 2);
     }
 
 }

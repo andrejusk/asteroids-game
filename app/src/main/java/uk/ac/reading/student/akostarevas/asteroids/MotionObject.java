@@ -7,7 +7,7 @@ class MotionObject extends GameObject {
     /* Physics variables */
     final static int tailMultiplier = 10;
     private final static int speedMultiplier = 100;
-    private final static int dropOffDivisor = 4;
+    private final static int dropOffDivisor = 100;
 
     /* Keep track of canvas */
     int canvasWidth;
@@ -38,7 +38,7 @@ class MotionObject extends GameObject {
 
     void move(float secondsElapsed) {
         /* Update velocity with drop off */
-        velocity -= Math.log(velocity + 1) * secondsElapsed / dropOffDivisor;
+        velocity -= Math.pow(velocity, 2) * secondsElapsed / dropOffDivisor;
 
         /* Calculate displacement */
         double angleRadians = (angle / 180.0 * Math.PI);
@@ -52,7 +52,7 @@ class MotionObject extends GameObject {
 
         /* If out of bounds */
         if (!inBounds(xRaw, yRaw)) {
-            /* If not supposed to be out of bounds */
+            /* If wasn't placed out of bounds */
             if (!enteringBounds) {
                 exitedBounds = true;
             }
@@ -96,11 +96,16 @@ class MotionObject extends GameObject {
     }
 
     boolean inBounds(double x, double y) {
-        return inBounds(x, y, this.canvasWidth, this.canvasHeight);
+        return inBounds(x, y, this.canvasWidth, this.canvasHeight, this.size);
     }
 
-    private static boolean inBounds(double x, double y, int canvasWidth, int canvasHeight) {
-        return (x <= canvasWidth && x >= 0 && y <= canvasHeight && y >= 0);
+    private static boolean inBounds(double x, double y, int canvasWidth, int canvasHeight, float size) {
+        return (
+                (x) <= canvasWidth &&
+                (x + size) >= 0 &&
+                (y) <= canvasHeight &&
+                (y + size) >= 0
+        );
     }
 
 }

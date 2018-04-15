@@ -12,15 +12,44 @@ class Asteroid extends MotionObject {
     private final Paint noAA;
 
     Bitmap bitmap;
-    int size;
 
     float rotationMultiplier;
     float rotation;
+
+    Asteroid(Asteroid parent, PlayerBullet playerBullet, boolean side) {
+        this(parent.canvasWidth, parent.canvasHeight, parent.bitmap);
+
+        /* Inherit position */
+        this.x = parent.x;
+        this.y = parent.y;
+
+        /* Resize */
+        this.size = parent.size / 2;
+        this.bitmap = Bitmap.createScaledBitmap(bitmap, (int) this.size, (int) this.size, false);
+
+        /* De-spawn if needed */
+        if (this.size < canvasHeight / 32) {
+            this.exitedBounds = true;
+        }
+        parent.exitedBounds = true;
+        playerBullet.exitedBounds = true;
+
+        /* Rotate */
+        if (side) {
+            this.angle = playerBullet.angle + 90;
+        } else {
+            this.angle = playerBullet.angle - 90;
+        }
+
+    }
 
     Asteroid(int canvasWidth, int canvasHeight, Bitmap bitmap) {
         super(0, 0, canvasWidth, canvasHeight, 0, 0, true);
 
         Random random = new Random();
+
+        /* Size for inBounds() */
+        this.size = canvasHeight / 8;
 
         /* Random point outside bounds */
         float startX, startY;
@@ -47,19 +76,9 @@ class Asteroid extends MotionObject {
         }
 
         /* Random speed */
-        velocity = random.nextFloat() * 4 + 6;
+        velocity = random.nextFloat() * 3 + 2;
 
-        /* Random size */
-        float size = random.nextFloat();
-        if (size < 0.5) {
-            this.size = canvasHeight / 8;
-        } else if (size < 0.8) {
-            this.size = canvasHeight / 16;
-        } else {
-            this.size = canvasHeight / 32;
-        }
-
-        this.bitmap = Bitmap.createScaledBitmap(bitmap, this.size, this.size, false);
+        this.bitmap = Bitmap.createScaledBitmap(bitmap, (int) this.size, (int) this.size, false);
 
         /* Random rotation */
         rotation = random.nextFloat() * 360;
