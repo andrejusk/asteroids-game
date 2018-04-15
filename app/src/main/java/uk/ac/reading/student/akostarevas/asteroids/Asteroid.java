@@ -2,19 +2,13 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 
 import java.util.Random;
 
 class Asteroid extends MotionObject {
 
-    private final Paint noAA;
-
-    Bitmap bitmap;
-
-    float rotationMultiplier;
-    float rotation;
+    private float rotationMultiplier;
+    private float rotation;
 
     Asteroid(Asteroid parent, MotionObject target, boolean side) {
         this(parent.canvasWidth, parent.canvasHeight, parent.bitmap);
@@ -44,7 +38,7 @@ class Asteroid extends MotionObject {
 
     Asteroid(int canvasWidth, int canvasHeight, Bitmap bitmap) {
         super(0, 0, canvasHeight / 8,
-                canvasWidth, canvasHeight, new Vector(), true);
+                canvasWidth, canvasHeight, new Vector(), true, bitmap);
 
         Random random = new Random();
 
@@ -64,18 +58,9 @@ class Asteroid extends MotionObject {
         motion = new Vector(this, target);
         motion.setVelocity(random.nextFloat() * 3 + 2);
 
-        /* Scale bitmap */
-        this.bitmap = Bitmap.createScaledBitmap(bitmap, (int) this.size, (int) this.size, false);
-
         /* Random rotation */
         rotation = random.nextFloat() * 360;
         rotationMultiplier = random.nextFloat() * 30;
-
-        /* No anti-alias scaling */
-        noAA = new Paint();
-        noAA.setAntiAlias(false);
-        noAA.setFilterBitmap(false);
-        noAA.setDither(false);
 
     }
 
@@ -84,15 +69,7 @@ class Asteroid extends MotionObject {
         if (exitedBounds) {
             return;
         }
-
-        /* Rotate asteroid */
-        Matrix matrix = new Matrix();
-        matrix.postTranslate(-bitmap.getWidth() / 2, -bitmap.getHeight() / 2);
-        matrix.postRotate(180 - rotation);
-        matrix.postTranslate(x + (float) (size / 2.0), y + (float) (size / 2.0));
-
-        /* Draw main player */
-        canvas.drawBitmap(bitmap, matrix, noAA);
+        super.draw(canvas, rotation);
     }
 
     @Override

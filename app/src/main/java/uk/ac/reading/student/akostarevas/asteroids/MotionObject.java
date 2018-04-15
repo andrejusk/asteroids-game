@@ -1,5 +1,10 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+
 /**
  * Extends GameObject.
  * Allows movement.
@@ -18,16 +23,33 @@ abstract class MotionObject extends GameObject {
     private boolean enteringBounds;
     boolean exitedBounds = false;
 
-    MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight) {
-        this(x, y, size, canvasWidth, canvasHeight, new Vector(), false);
+    /* Bitmap */
+    private final Paint noAA;
+    Bitmap bitmap;
+
+    MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight, Bitmap bitmap) {
+        this(x, y, size, canvasWidth, canvasHeight, new Vector(), false, bitmap);
     }
 
-    MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight, Vector motion, boolean enteringBounds) {
+    MotionObject(float x, float y, float size,
+                 int canvasWidth, int canvasHeight,
+                 Vector motion, boolean enteringBounds,
+                 Bitmap bitmap) {
         super(x, y, size, canvasWidth, canvasHeight);
 
+        /* Tracking flags */
         this.motion = motion;
         this.enteringBounds = enteringBounds;
         this.warp = !enteringBounds;
+
+        /* Scale bitmap */
+        this.bitmap = Bitmap.createScaledBitmap(bitmap, (int) this.size, (int) this.size, false);
+
+        /* No anti-alias scaling */
+        noAA = new Paint();
+        noAA.setAntiAlias(false);
+        noAA.setFilterBitmap(false);
+        noAA.setDither(false);
     }
 
     /**
@@ -84,6 +106,21 @@ abstract class MotionObject extends GameObject {
             x = (x < 0) ? x + canvasWidth : x;
             y = (y < 0) ? y + canvasHeight : y;
         }
+    }
+
+    void draw(Canvas canvas) {
+        draw(canvas, 180);
+    }
+
+    void draw(Canvas canvas, float rotate) {
+        /* Rotate bullet */
+        Matrix matrix = new Matrix();
+        matrix.postTranslate(-bitmap.getWidth() / 2, -bitmap.getHeight() / 2);
+        matrix.postRotate(180 - rotate);
+        matrix.postTranslate(x + (float) (size / 2.0), y + (float) (size / 2.0));
+
+        /* Draw main player */
+        canvas.drawBitmap(bitmap, matrix, noAA);
     }
 
 }
