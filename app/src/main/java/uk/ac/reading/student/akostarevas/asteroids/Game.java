@@ -11,26 +11,29 @@ import java.util.Random;
 
 public class Game extends GameThread {
 
+    /* Store MotionObjects in Game */
     private ArrayList<MotionObject> objects;
 
+    /* Player object */
+    private Player player;
+
+    /* Player controls */
     private PlayerInput joystick;
     private PlayerInput thrust, shoot;
 
-    //TODO: figure out better way of doing this
+    /* Game Bitmaps */
+    private final Bitmap playerNormal, playerThrust, asteroid;
+
+    /* Player control locations */ //TODO: figure out better way of doing this
     private final static float joyX = (float) (1.0 / 3.0);
     private final static float joyY = (float) (2.0 / 3.0);
-
     private final static float thrustX = (float) (0.70);
     private final static float thrustY = (float) (0.75);
-
     private final static float shootX = (float) (2.5 / 3.0);
     private final static float shootY = (float) (2.0 / 3.0);
 
+    /* Score values */
     private final static long asteroidPoints = 100;
-
-    private final Bitmap playerNormal, playerThrust, asteroid;
-
-    private Player player;
 
     /**
      * Set up game.
@@ -57,13 +60,13 @@ public class Game extends GameThread {
      */
     @Override
     public void setupBeginning() {
+        /* Create controls */
         createJoystick(canvasWidth * joyX, canvasHeight * joyY);
-
         thrust = new PlayerInput(canvasWidth * thrustX, canvasHeight * thrustY, PlayerInput.TYPE.THRUST);
         shoot = new PlayerInput(canvasWidth * shootX, canvasHeight * shootY, PlayerInput.TYPE.SHOOT);
 
+        /* Create Player and MotionObjects */
         player = new Player(canvasWidth, canvasHeight, playerNormal, playerThrust);
-
         objects = new ArrayList<>();
     }
 
@@ -77,7 +80,8 @@ public class Game extends GameThread {
         /* Draw background */
         super.draw(canvas);
 
-        if (super.gameState == STATE.READY) {
+        /* Don't draw if waiting */
+        if (super.gameState == STATE.MENU) {
             return;
         }
 
@@ -86,10 +90,10 @@ public class Game extends GameThread {
         thrust.draw(canvas);
         shoot.draw(canvas);
 
-        /* Draw player */
+        /* Draw Player */
         player.draw(canvas);
 
-        /* Draw objects */
+        /* Draw MotionObjects */
         for (MotionObject object : objects) {
             object.draw(canvas);
         }
@@ -260,6 +264,7 @@ public class Game extends GameThread {
         if (object == target) {
             return false;
         }
+        /* Returns if distance is less than sizes */
         return
                 (Math.pow(object.x - target.x, 2) + Math.pow(object.y - target.y, 2))
                 < Math.pow(object.size + target.size, 2);
