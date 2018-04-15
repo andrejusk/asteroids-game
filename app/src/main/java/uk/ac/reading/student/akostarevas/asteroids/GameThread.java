@@ -51,6 +51,9 @@ public abstract class GameThread extends Thread {
     /* Score tracking */
     long score = 0;
 
+    /* Lives */
+    protected int lives = 3;
+
     /* Background */
     private Paint background;
 
@@ -96,10 +99,14 @@ public abstract class GameThread extends Thread {
      */
     public void setup() {
         synchronized (monitor) {
+            /* Save lives/score between lives */
+            if (gameState != STATE.DEAD) {
+                updateScore(0);
+                updateLives(3);
+            }
             setupBeginning();
-            lastUpdate = System.currentTimeMillis() + 100;
+            lastUpdate = System.currentTimeMillis();
             setState(STATE.RUNNING);
-            updateScore(0);
         }
     }
 
@@ -218,11 +225,11 @@ public abstract class GameThread extends Thread {
      * UnPause game.
      */
     public void unPause() {
-        /* Move the real time clock up to now */
-        synchronized (monitor) {
+        if (gameState == STATE.PAUSE) {
+            /* Move the real time clock up to now */
             lastUpdate = System.currentTimeMillis();
+            setState(STATE.RUNNING);
         }
-        setState(STATE.RUNNING);
     }
 
 
@@ -289,7 +296,6 @@ public abstract class GameThread extends Thread {
 
     /**
      * Update and send a score to the View.
-     * Would it be better to do this inside this thread writing it manually on the screen?
      */
     private void updateScore(long score) {
         this.score = score;
@@ -299,6 +305,22 @@ public abstract class GameThread extends Thread {
             Bundle b = new Bundle();
             b.putBoolean("score", true);
             b.putString("text", getScoreString().toString());
+            msg.setData(b);
+            handler.sendMessage(msg);
+        }
+    }
+
+    /**
+     * Update and send a lives to the View.
+     */
+    protected void updateLives(int lives) {
+        this.lives = lives;
+
+        synchronized (monitor) {
+            Message msg = handler.obtainMessage();
+            Bundle b = new Bundle();
+            b.putBoolean("lives", true);
+            b.putString("text", String.valueOf(lives));
             msg.setData(b);
             handler.sendMessage(msg);
         }

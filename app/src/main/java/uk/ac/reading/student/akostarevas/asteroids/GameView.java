@@ -85,8 +85,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         if (thread != null) {
-            if (!hasWindowFocus)
+            if (!hasWindowFocus) {
                 thread.pause();
+            }
+            else {
+                thread.unPause();
+            }
         }
     }
 

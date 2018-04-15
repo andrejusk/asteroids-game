@@ -35,9 +35,6 @@ public class Game extends GameThread {
     /* Score values */
     private final static long asteroidPoints = 100;
 
-    /* Lives */
-    private int lives;
-
     /**
      * Set up game.
      *
@@ -76,9 +73,6 @@ public class Game extends GameThread {
         /* Create Player and MotionObjects */
         player = new Player(canvasWidth, canvasHeight, playerNormal, playerThrust);
         objects = new ArrayList<>();
-
-        /* Default lives */
-        lives = 3;
     }
 
     @Override
@@ -92,7 +86,7 @@ public class Game extends GameThread {
         super.draw(canvas);
 
         /* Don't draw if waiting */
-        if (super.gameState != STATE.RUNNING) {
+        if (super.gameState == STATE.MENU) {
             return;
         }
 
@@ -104,10 +98,12 @@ public class Game extends GameThread {
             object.draw(canvas);
         }
 
-        /* Overlay controllers */
-        joystick.draw(canvas);
-        thrust.draw(canvas);
-        shoot.draw(canvas);
+        if (super.gameState != STATE.DEAD) {
+            /* Overlay controllers */
+            joystick.draw(canvas);
+            thrust.draw(canvas);
+            shoot.draw(canvas);
+        }
 
     }
 
@@ -122,6 +118,10 @@ public class Game extends GameThread {
      */
     @Override
     protected boolean actionOnTouch(MotionEvent e) {
+
+        if (super.gameState != STATE.RUNNING) {
+            return false;
+        }
 
         int pointerIndex = e.getActionIndex();
         int pointerId = e.getPointerId(pointerIndex);
@@ -237,7 +237,7 @@ public class Game extends GameThread {
             /* If Player hits Asteroid */
             if (object instanceof Asteroid && collides(player, object)) {
                 if (lives > 0) {
-                    lives--;
+                    updateLives(lives - 1);
                     super.setState(STATE.DEAD);
                 } else {
                     super.setState(STATE.FINISH);
@@ -290,7 +290,8 @@ public class Game extends GameThread {
         }
         /* Returns if distance is less than radii */
         return
-                (Math.pow(object.x - target.x, 2) + Math.pow(object.y - target.y, 2))
+                (Math.pow((object.x + object.size / 2) - (target.x + target.size / 2), 2)
+                        + Math.pow((object.y + object.size / 2) - (target.y + target.size / 2), 2))
                 < Math.pow(object.size / 2 + target.size / 2, 2);
     }
 
