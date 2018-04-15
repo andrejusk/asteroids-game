@@ -33,7 +33,12 @@ public class GameActivity extends AppCompatActivity {
 
         gameView = findViewById(R.id.gamearea);
         gameView.statusView = findViewById(R.id.text);
+        gameView.liveView = findViewById(R.id.lives);
         gameView.scoreView = findViewById(R.id.score);
+
+        gameView.scores = findViewById(R.id.button_scores);
+        gameView.diff = findViewById(R.id.button_difficulty);
+        gameView.guide = findViewById(R.id.button_help);
         gameView.setup();
 
         this.startGame(savedInstanceState);

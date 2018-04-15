@@ -249,43 +249,38 @@ public abstract class GameThread extends Thread {
             this.gameState = state;
 
             Message msg = handler.obtainMessage();
-            Bundle b = new Bundle();
-
-            b.putInt("viz", View.VISIBLE);
+            Bundle bundle = new Bundle();
 
             if (this.gameState == STATE.RUNNING) {
-                b.putString("text", "");
-                b.putBoolean("showAd", false);
+                bundle.putInt("viz", View.GONE);
+                bundle.putInt("buttons", View.GONE);
+                bundle.putString("text", "");
             } else {
+                bundle.putInt("viz", View.VISIBLE);
                 Resources res = context.getResources();
-                CharSequence str;
-
                 switch (this.gameState) {
                     case MENU:
-                        str = res.getText(R.string.mode_menu);
+                        bundle.putString("text", res.getText(R.string.mode_menu).toString());
+                        bundle.putInt("buttons", View.VISIBLE);
                         break;
                     case PAUSE:
-                        str = res.getText(R.string.mode_pause);
+                        bundle.putString("text", res.getText(R.string.mode_pause).toString());
+                        bundle.putInt("buttons", View.INVISIBLE);
                         break;
                     case DEAD:
-                        str = res.getText(R.string.mode_dead);
+                        bundle.putString("text", res.getText(R.string.mode_dead).toString());
+                        bundle.putInt("buttons", View.INVISIBLE);
                         break;
                     case FINISH:
-                        str = res.getText(R.string.mode_finish);
+                        bundle.putString("text", res.getText(R.string.mode_finish).toString());
+                        bundle.putInt("buttons", View.INVISIBLE);
                         break;
                     default:
-                        str = "";
+                        bundle.putString("text", "");
                         break;
                 }
-
-                if (message != null) {
-                    str = message + "\n" + str;
-                }
-
-                b.putString("text", str.toString());
             }
-
-            msg.setData(b);
+            msg.setData(bundle);
             handler.sendMessage(msg);
         }
     }

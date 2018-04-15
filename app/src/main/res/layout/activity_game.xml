@@ -17,12 +17,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="3px"
+            android:layout_marginTop="10dp"
             android:gravity="top"
             android:text="@string/score_text"
             android:textColor="#ffffffff"
             android:textSize="24sp"
-            android:visibility="visible" />
+            android:visibility="visible"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/lives"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="10dp"
+            android:gravity="top"
+            android:text="@string/score_lives"
+            android:textColor="#ffffffff"
+            android:textSize="24sp"
+            android:visibility="visible"
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:id="@+id/text"
@@ -34,5 +48,40 @@
             android:gravity="center_horizontal"
             android:textColor="#ffffffff"
             android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/button_difficulty"
+            android:textColor="#ffffff"
+            android:background="#000000"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="@string/button_difficulty" />
+
+        <Button
+            android:id="@+id/button_scores"
+            android:textColor="#ffffff"
+            android:background="#000000"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dp"
+            android:text="@string/button_scores" />
+
+
+        <Button
+            android:id="@+id/button_help"
+            android:textColor="#ffffff"
+            android:background="#000000"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="110dp"
+            android:text="@string/button_help" />
+
     </RelativeLayout>
 </FrameLayout>
