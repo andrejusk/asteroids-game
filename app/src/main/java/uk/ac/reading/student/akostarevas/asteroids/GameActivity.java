@@ -49,7 +49,7 @@ public class GameActivity extends AppCompatActivity {
         //TODO: savedInstance
         gameThread = new Game(gameView);
         gameView.setThread(gameThread);
-        gameThread.setState(GameThread.STATE.READY);
+        gameThread.setState(GameThread.STATE.MENU);
     }
 
     /**
