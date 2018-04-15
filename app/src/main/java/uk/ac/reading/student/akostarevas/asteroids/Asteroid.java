@@ -85,7 +85,7 @@ class Asteroid extends MotionObject {
             return;
         }
 
-        /* Rotate player */
+        /* Rotate asteroid */
         Matrix matrix = new Matrix();
         matrix.postTranslate(-bitmap.getWidth() / 2, -bitmap.getHeight() / 2);
         matrix.postRotate(180 - rotation);

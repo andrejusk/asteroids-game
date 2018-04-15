@@ -22,7 +22,7 @@ public class Game extends GameThread {
     private PlayerInput thrust, shoot;
 
     /* Game Bitmaps */
-    private final Bitmap playerNormal, playerThrust, asteroid;
+    private final Bitmap playerNormal, playerThrust, asteroid, bullet;
 
     /* Player control locations */ //TODO: figure out better way of doing this
     private final static float joyX = (float) (1.0 / 3.0);
@@ -54,6 +54,9 @@ public class Game extends GameThread {
                 R.drawable.spaceship_thrust);
 
         asteroid = BitmapFactory.decodeResource(
+                gameView.getContext().getResources(),
+                R.drawable.asteroid);
+        bullet = BitmapFactory.decodeResource(
                 gameView.getContext().getResources(),
                 R.drawable.asteroid);
     }
@@ -176,7 +179,7 @@ public class Game extends GameThread {
                 }
                 /* Shoot button */
                 else if (shoot.isAffected(x, y)) {
-                    PlayerBullet bullet = new PlayerBullet(player);
+                    PlayerBullet bullet = new PlayerBullet(player, this.bullet);
                     objects.add(bullet);
                 }
             }
