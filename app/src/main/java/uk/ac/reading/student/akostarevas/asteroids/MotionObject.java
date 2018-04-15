@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 /**
  * Extends GameObject.
@@ -26,6 +27,9 @@ abstract class MotionObject extends GameObject {
     /* Bitmap */
     private final Paint noAA;
     Bitmap bitmap;
+
+    /* Bitmap rotate */
+    float rotation;
 
     MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight, Bitmap bitmap) {
         this(x, y, size, canvasWidth, canvasHeight, new Vector(), false, bitmap);
@@ -50,6 +54,9 @@ abstract class MotionObject extends GameObject {
         noAA.setAntiAlias(false);
         noAA.setFilterBitmap(false);
         noAA.setDither(false);
+
+        /* Rotate */
+        rotation = 180;
     }
 
     /**
@@ -109,7 +116,7 @@ abstract class MotionObject extends GameObject {
     }
 
     void draw(Canvas canvas) {
-        draw(canvas, 180);
+        draw(canvas, rotation);
     }
 
     void draw(Canvas canvas, float rotate) {

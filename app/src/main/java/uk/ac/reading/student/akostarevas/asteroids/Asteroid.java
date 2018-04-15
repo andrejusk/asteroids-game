@@ -8,7 +8,6 @@ import java.util.Random;
 class Asteroid extends MotionObject {
 
     private float rotationMultiplier;
-    private float rotation;
 
     Asteroid(Asteroid parent, MotionObject target, boolean side) {
         this(parent.canvasWidth, parent.canvasHeight, parent.bitmap);
@@ -69,7 +68,7 @@ class Asteroid extends MotionObject {
         if (exitedBounds) {
             return;
         }
-        super.draw(canvas, rotation);
+        super.draw(canvas);
     }
 
     @Override
