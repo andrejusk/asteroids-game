@@ -19,8 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.*;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -109,7 +107,7 @@ public class GameActivity extends AppCompatActivity {
                         Map<String, Long> map = (Map<String, Long>) dataSnapshot.getValue();
 
                         if (map == null) {
-                            score.setText("No high scores yet!");
+                            score.setText(R.string.no_scores);
                         } else {
                             StringBuilder scores = new StringBuilder();
                             for (java.lang.Object o : map.entrySet()) {
@@ -186,7 +184,6 @@ public class GameActivity extends AppCompatActivity {
      */
     @SuppressWarnings("unused")
     private void startGame(Bundle savedInstanceState) {
-        //TODO: savedInstance
         gameThread = new Game(gameView);
         gameView.setThread(gameThread);
         gameThread.setState(GameThread.STATE.MENU);

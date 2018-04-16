@@ -23,4 +23,5 @@
     <string name="diff_easy">Easy</string>
     <string name="diff_med">Medium</string>
     <string name="diff_hard">Hard</string>
+    <string name="no_scores">No high scores yet!</string>
 </resources>

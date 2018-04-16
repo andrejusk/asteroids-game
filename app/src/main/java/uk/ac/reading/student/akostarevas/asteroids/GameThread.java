@@ -196,7 +196,6 @@ public abstract class GameThread extends Thread {
                 return true;
             }
             if (gameState == STATE.FINISH) {
-                //TODO: Save score, go to STATE.MENU
                 Message msg = handler.obtainMessage();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("submit", true);

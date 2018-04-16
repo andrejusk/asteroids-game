@@ -35,6 +35,9 @@ class GameHandler extends Handler {
     private EditText name;
     private ImageView logo;
 
+    /**
+     * Constructor
+     */
     GameHandler(TextView scoreView, TextView livesView, TextView statusView,
                 Button difficulty, Button high, Button help, EditText name, ImageView logo) {
         this.scoreView = scoreView;
@@ -49,6 +52,10 @@ class GameHandler extends Handler {
         this.logo = logo;
     }
 
+    /**
+     * Handles message.
+     * @param m Message.
+     */
     @Override
     public void handleMessage(final Message m) {
         if (m.getData().getBoolean("score")) {

@@ -3,14 +3,15 @@ package uk.ac.reading.student.akostarevas.asteroids;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.media.MediaPlayer;
-import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Game class.
+ */
 public class Game extends GameThread {
 
     /* Store MotionObjects in Game */
@@ -26,7 +27,7 @@ public class Game extends GameThread {
     /* Game Bitmaps */
     private final Bitmap playerNormal, playerThrust, asteroid, bullet;
 
-    /* Player control locations */ //TODO: figure out better way of doing this
+    /* Player control locations */
     private final static float joyX = (float) (1.0 / 3.0);
     private final static float joyY = (float) (2.0 / 3.0);
     private final static float thrustX = (float) (0.70);
@@ -83,6 +84,10 @@ public class Game extends GameThread {
         objects = new ArrayList<>();
     }
 
+    /**
+     * Draws Game.
+     * @param canvas Canvas to draw to.
+     */
     @Override
     protected void draw(Canvas canvas) {
         /* No canvas */
@@ -115,6 +120,11 @@ public class Game extends GameThread {
 
     }
 
+    /**
+     * Creates Joystick at given location.
+     * @param x X location.
+     * @param y Y location.
+     */
     private void createJoystick(float x, float y) {
         joystick = new PlayerInput(x, y, canvasWidth, canvasHeight, PlayerInput.TYPE.JOYSTICK);
     }
@@ -304,11 +314,20 @@ public class Game extends GameThread {
 
     }
 
+    /**
+     * Cleans before changing states.
+     */
     void cleanState() {
         soundThread.stopEngine = true;
     }
 
-    private boolean collides(MotionObject object, MotionObject target) {
+    /**
+     * Performs collision detection.
+     * @param object Object to test.
+     * @param target Target to test against.
+     * @return Whether objects collide.
+     */
+    private boolean collides(Object object, Object target) {
         /* Ignore self */
         if (object == target) {
             return false;

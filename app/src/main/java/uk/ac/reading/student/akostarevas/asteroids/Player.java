@@ -2,19 +2,16 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 
-@SuppressWarnings("unused")
+/**
+ * Player class.
+ */
 class Player extends MotionObject {
 
+    /* Constant flags */
     private final static float angleMultiplier = 100;
     private final static double thrustSpeed = (float) 0.15;
-
-    private final static int directionMultiplier = 5;
-
     private final static float maxVelocity = 25;
-
     private final static float playerScale = 16;
 
     private final Bitmap normal, thrust;
@@ -25,6 +22,13 @@ class Player extends MotionObject {
     boolean turningRight;
     boolean thrusting;
 
+    /**
+     * Player constructor.
+     * @param canvasWidth
+     * @param canvasHeight
+     * @param normal
+     * @param thrust
+     */
     Player(int canvasWidth, int canvasHeight, Bitmap normal, Bitmap thrust) {
         super(canvasWidth / 2, canvasHeight / 2, ((float) canvasHeight) / playerScale, canvasWidth, canvasHeight, normal);
 
@@ -38,6 +42,11 @@ class Player extends MotionObject {
         this.thrust = Bitmap.createScaledBitmap(thrust, (int) size, (int) size, false);
     }
 
+    /**
+     * Update angle from Joystick.
+     * @param reference Joystick centre.
+     * @param target Joystick target.
+     */
     void updateAngle(Object reference, Object target) {
 
         double xVector = target.x - reference.x;
@@ -52,6 +61,10 @@ class Player extends MotionObject {
 
     }
 
+    /**
+     * Moves player.
+     * @param secondsElapsed Seconds elapsed.
+     */
     void move(float secondsElapsed) {
         /* Turning */
         if (turningLeft) {
@@ -72,18 +85,27 @@ class Player extends MotionObject {
         super.move(secondsElapsed);
     }
 
+    /**
+     * Draws and wraps player.
+     * @param canvas Canvas to draw to.
+     */
     @Override
     void draw(Canvas canvas) {
         drawPlayer(canvas, x, y);
 
         /* Wrap around */
-        //TODO: conditionals for whether to bother?
         drawPlayer(canvas, x + canvasWidth, y);
         drawPlayer(canvas, x - canvasWidth, y);
         drawPlayer(canvas, x, y + canvasHeight);
         drawPlayer(canvas, x, y - canvasHeight);
     }
 
+    /**
+     * Draws Player.
+     * @param canvas Canvas to draw to.
+     * @param x X coordinate to use.
+     * @param y Y coordinate to use.
+     */
     private void drawPlayer(Canvas canvas, float x, float y) {
         /* Select correct bitmap */
         this.bitmap = (thrusting) ? thrust : normal;
