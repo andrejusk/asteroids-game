@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
@@ -32,9 +33,10 @@ class GameHandler extends Handler {
     private Button help;
 
     private EditText name;
+    private ImageView logo;
 
     GameHandler(TextView scoreView, TextView livesView, TextView statusView,
-                Button difficulty, Button high, Button help, EditText name) {
+                Button difficulty, Button high, Button help, EditText name, ImageView logo) {
         this.scoreView = scoreView;
         this.statusView = statusView;
         this.livesView = livesView;
@@ -44,6 +46,7 @@ class GameHandler extends Handler {
         this.help = help;
 
         this.name = name;
+        this.logo = logo;
     }
 
     @Override
@@ -107,6 +110,7 @@ class GameHandler extends Handler {
             this.difficulty.setVisibility(buttons);
             this.high.setVisibility(buttons);
             this.help.setVisibility(buttons);
+            this.logo.setVisibility(buttons);
 
             if (buttons == View.VISIBLE) {
                 this.scoreView.setVisibility(View.GONE);

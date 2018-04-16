@@ -58,6 +58,7 @@ public class GameActivity extends AppCompatActivity {
         gameView.scores = findViewById(R.id.button_scores);
         gameView.guide = findViewById(R.id.button_help);
         gameView.name = findViewById(R.id.score_name);
+        gameView.logo = findViewById(R.id.logo);
 
         /* Menu buttons */
         gameView.diff.setOnClickListener(new View.OnClickListener() {
