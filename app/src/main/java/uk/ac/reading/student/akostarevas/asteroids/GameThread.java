@@ -29,9 +29,16 @@ public abstract class GameThread extends Thread {
     enum STATE {
         MENU, PAUSE, RUNNING, DEAD, FINISH
     }
-
     /* Control variable for the gameState of the game (e.g. STATE.WIN) */
     protected STATE gameState;
+
+    /*
+        Different difficulties
+     */
+    enum DIFFICULTY {
+        EASY, MEDIUM, HARD
+    }
+    protected DIFFICULTY difficulty = DIFFICULTY.MEDIUM;
 
     /* Used to ensure appropriate threading */
     static final Integer monitor = 1;

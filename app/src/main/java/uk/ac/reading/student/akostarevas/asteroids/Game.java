@@ -275,10 +275,18 @@ public class Game extends GameThread {
             }
         }
 
-        /* Create objects */
-        Random random = new Random(Double.doubleToLongBits(Math.random()));
-        if (random.nextFloat() < 0.01) {
-            objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
+        if (difficulty != DIFFICULTY.EASY) {
+            /* Create objects */
+            Random random = new Random(Double.doubleToLongBits(Math.random()));
+            if (random.nextFloat() < 0.01) {
+                objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
+            }
+            if (difficulty == DIFFICULTY.HARD) {
+                /* Create more objects */
+                if (random.nextFloat() < 0.01) {
+                    objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
+                }
+            }
         }
 
     }

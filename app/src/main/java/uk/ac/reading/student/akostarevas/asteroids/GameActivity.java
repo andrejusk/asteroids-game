@@ -64,14 +64,36 @@ public class GameActivity extends AppCompatActivity {
         gameView.diff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup(R.layout.popup_diff);
+                final PopupWindow popup = showPopup(R.layout.popup_diff);
+
+                popup.getContentView().findViewById(R.id.diff_easy).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        gameThread.difficulty = GameThread.DIFFICULTY.EASY;
+                        popup.dismiss();
+                    }
+                });
+                popup.getContentView().findViewById(R.id.diff_med).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        gameThread.difficulty = GameThread.DIFFICULTY.MEDIUM;
+                        popup.dismiss();
+                    }
+                });
+                popup.getContentView().findViewById(R.id.diff_hard).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        gameThread.difficulty = GameThread.DIFFICULTY.HARD;
+                        popup.dismiss();
+                    }
+                });
             }
         });
         gameView.scores.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final View popup = showPopup(R.layout.popup_score);
-                final TextView score = popup.findViewById(R.id.popup_score_text);
+                final PopupWindow popup = showPopup(R.layout.popup_score);
+                final TextView score = popup.getContentView().findViewById(R.id.popup_score_text);
 
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference("scores");
@@ -118,7 +140,7 @@ public class GameActivity extends AppCompatActivity {
      * Shows popup.
      * @param popup Popup to show.
      */
-    private View showPopup(int popup) {
+    private PopupWindow showPopup(int popup) {
         /* Get main layout */
         RelativeLayout mainLayout = findViewById(R.id.gameLayout);
 
@@ -148,7 +170,7 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-        return popupView;
+        return popupWindow;
     }
 
     /**
@@ -176,6 +198,13 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Back button function.
+     */
+    @Override
+    public void onBackPressed() {
+        gameThread.setState(GameThread.STATE.MENU);
+    }
 
     /**
      * Destroy function.
