@@ -1,29 +1,52 @@
 package uk.ac.reading.student.akostarevas.asteroids;
 
+/**
+ * Vector class.
+ */
 class Vector {
 
-    float xDisplace;
-    float yDisplace;
+    /* X/Y Displacement */
+    private float xDisplace;
+    private float yDisplace;
 
+    /* Vector */
     double velocity;
     double angleDegrees;
 
+    /**
+     * Empty Vector constructor.
+     */
     Vector() {
         this(0, 0);
     }
 
+    /**
+     * Displacement Vector Constructor.
+     * @param xDisplace X displacement.
+     * @param yDisplace Y displacement.
+     */
     Vector(float xDisplace, float yDisplace) {
         this.xDisplace = xDisplace;
         this.yDisplace = yDisplace;
         updateVector();
     }
 
+    /**
+     * Vector Constructor.
+     * @param velocity Velocity.
+     * @param angleDegrees Angle in degrees.
+     */
     Vector(double velocity, double angleDegrees) {
         this.velocity = velocity;
         this.angleDegrees = angleDegrees;
         updateDisplacement();
     }
 
+    /**
+     * Relative angle Vector constructor.
+     * @param source Source.
+     * @param target Target.
+     */
     Vector(Object source, Object target) {
         this(target.x - source.x, target.y - source.y);
     }

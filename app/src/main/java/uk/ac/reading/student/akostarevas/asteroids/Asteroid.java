@@ -5,10 +5,20 @@ import android.graphics.Canvas;
 
 import java.util.Random;
 
+/**
+ * Asteroids class.
+ */
 class Asteroid extends MotionObject {
 
+    /* Rotation per time */
     private float rotationMultiplier;
 
+    /**
+     * Constructor for collision splitting.
+     * @param parent Parent Asteroid.
+     * @param target PlayerBullet that hit the Asteroid.
+     * @param side Which side to split to.
+     */
     Asteroid(Asteroid parent, MotionObject target, boolean side) {
         this(parent.canvasWidth, parent.canvasHeight, parent.bitmap);
 
@@ -35,6 +45,12 @@ class Asteroid extends MotionObject {
         target.exitedBounds = true;
     }
 
+    /**
+     * Asteroid constructor, randomly generates values.
+     * @param canvasWidth Canvas width.
+     * @param canvasHeight Canvas Height.
+     * @param bitmap Bitmap image.
+     */
     Asteroid(int canvasWidth, int canvasHeight, Bitmap bitmap) {
         super(0, 0, canvasHeight / 8,
                 canvasWidth, canvasHeight, new Vector(), true, bitmap);
@@ -63,6 +79,10 @@ class Asteroid extends MotionObject {
 
     }
 
+    /**
+     * Draws Asteroid if in bounds.
+     * @param canvas Canvas to draw to.
+     */
     @Override
     void draw(Canvas canvas) {
         if (exitedBounds) {
@@ -71,6 +91,10 @@ class Asteroid extends MotionObject {
         super.draw(canvas);
     }
 
+    /**
+     * Moves and rotates Asteroid if in bounds.
+     * @param secondsElapsed Seconds elapsed.
+     */
     @Override
     void move(float secondsElapsed) {
         if (exitedBounds) {

@@ -31,10 +31,30 @@ abstract class MotionObject extends GameObject {
     /* Bitmap rotate */
     float rotation;
 
+    /**
+     * MotionObject constructor without motion.
+     * @param x X coordinate.
+     * @param y Y coordinate.
+     * @param size Size.
+     * @param canvasWidth Canvas width.
+     * @param canvasHeight Canvas height.
+     * @param bitmap Bitmap.
+     */
     MotionObject(float x, float y, float size, int canvasWidth, int canvasHeight, Bitmap bitmap) {
         this(x, y, size, canvasWidth, canvasHeight, new Vector(), false, bitmap);
     }
 
+    /**
+     * MotionObject constructor.
+     * @param x X coordinate.
+     * @param y Y coordinate.
+     * @param size Size.
+     * @param canvasWidth Canvas width.
+     * @param canvasHeight Canvas height.
+     * @param motion Motion Vector.
+     * @param enteringBounds Whether entering bounds.
+     * @param bitmap Bitmap
+     */
     MotionObject(float x, float y, float size,
                  int canvasWidth, int canvasHeight,
                  Vector motion, boolean enteringBounds,
@@ -115,10 +135,19 @@ abstract class MotionObject extends GameObject {
         }
     }
 
+    /**
+     * Draws with own rotation.
+     * @param canvas Canvas to draw to.
+     */
     void draw(Canvas canvas) {
         draw(canvas, rotation);
     }
 
+    /**
+     * Draws with given rotation.
+     * @param canvas Canvas to draw to.
+     * @param rotate Rotation to use.
+     */
     void draw(Canvas canvas, float rotate) {
         /* Rotate bullet */
         Matrix matrix = new Matrix();
@@ -128,50 +157,6 @@ abstract class MotionObject extends GameObject {
 
         /* Draw main player */
         canvas.drawBitmap(bitmap, matrix, noAA);
-    }
-
-    static boolean collides(MotionObject object, MotionObject target) {
-        /* Rotate object */
-        Matrix objectMatrix = new Matrix();
-        objectMatrix.postTranslate(-object.bitmap.getWidth() / 2, -object.bitmap.getHeight() / 2);
-        objectMatrix.postRotate(180 - object.rotation);
-        objectMatrix.postTranslate(object.x + (float) (object.size / 2.0), object.y + (float) (object.size / 2.0));
-
-        /* Rotate target */
-        Matrix targetMatrix = new Matrix();
-        targetMatrix.postTranslate(-target.bitmap.getWidth() / 2, -target.bitmap.getHeight() / 2);
-        targetMatrix.postRotate(180 - target.rotation);
-        targetMatrix.postTranslate(target.x + (float) (target.size / 2.0), target.y + (float) (target.size / 2.0));
-
-
-        Bitmap rotatedObject = Bitmap.createBitmap(
-                object.bitmap,
-                (int) object.x, (int) object.y,
-                (int) object.size, (int) object.size,
-                objectMatrix, false
-        );
-        Bitmap rotatedTarget = Bitmap.createBitmap(
-                target.bitmap,
-                (int) target.x, (int) target.y,
-                (int) target.size, (int) target.size,
-                targetMatrix, false
-        );
-
-
-        Rect objectBounds = new Rect(
-                (int) object.x,
-                (int) object.y,
-                (int) object.x + rotatedObject.getWidth(),
-                (int) object.y + rotatedObject.getHeight()
-        );
-        Rect targetBounds = new Rect(
-                (int) target.x,
-                (int) target.y,
-                (int) target.x + rotatedTarget.getWidth(),
-                (int) target.y + rotatedTarget.getHeight()
-        );
-
-        return objectBounds.intersect(targetBounds);
     }
 
 }

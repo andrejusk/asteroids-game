@@ -3,14 +3,20 @@ package uk.ac.reading.student.akostarevas.asteroids;
 import android.content.Context;
 import android.media.MediaPlayer;
 
-public class SoundThread extends Thread{
+/**
+ * SouundThread class.
+ */
+public class SoundThread extends Thread {
 
+    /* Context to play to */
     private Context context;
 
+    /* Global engine sound */
     private MediaPlayer engine;
 
     boolean stop = false;
 
+    /* Start/stop flags */
     boolean
             startEngine = false,
             stopEngine = false,
@@ -18,11 +24,18 @@ public class SoundThread extends Thread{
             playHit = false,
             playDeath = false;
 
+    /**
+     * Constructor.
+     * @param context Context.
+     */
     SoundThread(Context context) {
         this.context = context;
         engine = MediaPlayer.create(context, R.raw.sfx_vehicle_engineloop);
     }
 
+    /**
+     * Run method. Listens for flags.
+     */
     @Override
     public void run() {
         while (!stop) {
@@ -50,12 +63,18 @@ public class SoundThread extends Thread{
         stopEngine();
     }
 
+    /**
+     * Start engine sound.
+     */
     private void startEngine() {
         engine = MediaPlayer.create(context, R.raw.sfx_vehicle_engineloop);
         engine.setLooping(true);
         engine.start();
     }
 
+    /**
+     * Stop engine sound if exists.
+     */
     private void stopEngine() {
         try {
             if (engine.isPlaying()) {
@@ -65,6 +84,9 @@ public class SoundThread extends Thread{
         } catch(Exception ignored) {}
     }
 
+    /**
+     * Play firing noise.
+     */
     private void playFire() {
         final MediaPlayer fire = MediaPlayer.create(context, R.raw.sfx_damage_hit1);
         fire.start();
@@ -76,6 +98,9 @@ public class SoundThread extends Thread{
         });
     }
 
+    /**
+     * Play death sound.
+     */
     private void playDeath() {
         final MediaPlayer death = MediaPlayer.create(context, R.raw.sfx_exp_medium1);
         death.start();
@@ -87,6 +112,9 @@ public class SoundThread extends Thread{
         });
     }
 
+    /**
+     * Play hit sound.
+     */
     private void playHit() {
         final MediaPlayer hit = MediaPlayer.create(context, R.raw.sfx_exp_short_soft1);
         hit.start();
