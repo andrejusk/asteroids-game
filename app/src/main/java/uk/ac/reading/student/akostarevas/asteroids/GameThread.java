@@ -134,6 +134,8 @@ public abstract class GameThread extends Thread {
                     }
                     draw(canvasRun);
                 }
+            } catch (Exception e) {
+                return;
             } finally {
                 if (canvasRun != null) {
                     if (surfaceHolder != null)
