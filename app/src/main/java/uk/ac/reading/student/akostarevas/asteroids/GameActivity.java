@@ -64,11 +64,13 @@ public class GameActivity extends AppCompatActivity {
         gameView.diff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GameView.playSelect(gameThread);
                 final PopupWindow popup = showPopup(R.layout.popup_diff);
 
                 popup.getContentView().findViewById(R.id.diff_easy).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        GameView.playSelect(gameThread);
                         gameThread.difficulty = GameThread.DIFFICULTY.EASY;
                         popup.dismiss();
                     }
@@ -76,6 +78,7 @@ public class GameActivity extends AppCompatActivity {
                 popup.getContentView().findViewById(R.id.diff_med).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        GameView.playSelect(gameThread);
                         gameThread.difficulty = GameThread.DIFFICULTY.MEDIUM;
                         popup.dismiss();
                     }
@@ -83,6 +86,7 @@ public class GameActivity extends AppCompatActivity {
                 popup.getContentView().findViewById(R.id.diff_hard).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        GameView.playSelect(gameThread);
                         gameThread.difficulty = GameThread.DIFFICULTY.HARD;
                         popup.dismiss();
                     }
@@ -92,6 +96,7 @@ public class GameActivity extends AppCompatActivity {
         gameView.scores.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GameView.playSelect(gameThread);
                 final PopupWindow popup = showPopup(R.layout.popup_score);
                 final TextView score = popup.getContentView().findViewById(R.id.popup_score_text);
 
@@ -100,7 +105,6 @@ public class GameActivity extends AppCompatActivity {
 
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @SuppressWarnings("unchecked")
-                    @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Map<String, Long> map = (Map<String, Long>) dataSnapshot.getValue();
 
@@ -127,6 +131,7 @@ public class GameActivity extends AppCompatActivity {
         gameView.guide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GameView.playSelect(gameThread);
                 showPopup(R.layout.popup_guide);
             }
         });
@@ -153,7 +158,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         /* Create popup */
-        View popupView = inflater.inflate(popup, null);
+        final View popupView = inflater.inflate(popup, null);
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
@@ -166,6 +171,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 popupWindow.dismiss();
+                GameView.playSelect(gameThread);
                 return true;
             }
         });

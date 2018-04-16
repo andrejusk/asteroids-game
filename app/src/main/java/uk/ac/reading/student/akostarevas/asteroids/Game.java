@@ -3,6 +3,8 @@ package uk.ac.reading.student.akostarevas.asteroids;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.media.MediaPlayer;
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -35,6 +37,9 @@ public class Game extends GameThread {
     /* Score values */
     private final static long asteroidPoints = 100;
 
+    /* Sound thread */
+    private SoundThread soundThread;
+
     /**
      * Set up game.
      *
@@ -56,6 +61,9 @@ public class Game extends GameThread {
         bullet = BitmapFactory.decodeResource(
                 gameView.getContext().getResources(),
                 R.drawable.asteroid);
+
+        soundThread = new SoundThread(context);
+        soundThread.start();
     }
 
     /**
@@ -137,6 +145,7 @@ public class Game extends GameThread {
             if (thrust.isPointer(pointerId)) {
                 player.thrusting = false;
                 thrust.active = false;
+                soundThread.stopEngine = true;
             }
             /* If thrust finger */
             else if (shoot.isPointer(pointerId)) {
@@ -180,6 +189,7 @@ public class Game extends GameThread {
                     player.thrusting = true;
                     thrust.active = true;
                     thrust.pointerId = pointerId;
+                    soundThread.startEngine = true;
                 }
                 /* Shoot button */
                 else if (shoot.isAffected(x, y)) {
@@ -187,6 +197,7 @@ public class Game extends GameThread {
                     shoot.active = true;
                     PlayerBullet bullet = new PlayerBullet(player, this.bullet);
                     objects.add(bullet);
+                    soundThread.playFire = true;
                 }
             }
         }
@@ -242,6 +253,7 @@ public class Game extends GameThread {
                 } else {
                     super.setState(STATE.FINISH);
                 }
+                soundThread.playDeath = true;
             }
 
             /* If object collides any other object */
@@ -258,6 +270,7 @@ public class Game extends GameThread {
                         objects.set(j, new Asteroid((Asteroid) target, object, false));
                         /* Increment score */
                         super.increaseScore(asteroidPoints);
+                        soundThread.playHit = true;
                     }
                 }
             }
@@ -289,6 +302,10 @@ public class Game extends GameThread {
             }
         }
 
+    }
+
+    void cleanState() {
+        soundThread.stopEngine = true;
     }
 
     private boolean collides(MotionObject object, MotionObject target) {

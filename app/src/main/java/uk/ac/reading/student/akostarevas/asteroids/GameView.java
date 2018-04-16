@@ -2,6 +2,7 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -70,7 +71,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setOnTouchListener(new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
             public boolean onTouch(View v, MotionEvent event) {
-                return thread != null && thread.onTouch(event);
+                if (thread == null) {
+                    return false;
+                }
+                if (thread.gameState == GameThread.STATE.MENU) {
+                    playSelect(thread);
+                }
+                return thread.onTouch(event);
             }
         });
 
@@ -82,6 +89,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         setClickable(true);
         setFocusable(true);
+    }
+
+    static void playSelect(GameThread thread) {
+        playSelect(thread.context);
+    }
+
+    static void playSelect(Context context) {
+        /* Play jingle */
+        final MediaPlayer beep = MediaPlayer.create(context, R.raw.sfx_sounds_blip2);
+        beep.start();
+        beep.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                beep.release();
+            }
+        });
     }
 
     /**

@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -71,7 +72,7 @@ public abstract class GameThread extends Thread {
     private Handler handler;
 
     /* Android Context - this stores almost all we need to know */
-    private Context context;
+    Context context;
 
     public GameThread(GameView gameView) {
         this.gameView = gameView;
@@ -268,6 +269,11 @@ public abstract class GameThread extends Thread {
         synchronized (monitor) {
             this.gameState = state;
 
+            cleanState();
+            if (state == STATE.MENU) {
+                playJingle();
+            }
+
             Message msg = handler.obtainMessage();
             Bundle bundle = new Bundle();
 
@@ -305,6 +311,19 @@ public abstract class GameThread extends Thread {
         }
     }
 
+    abstract void cleanState();
+
+    private void playJingle() {
+        /* Play jingle */
+        final MediaPlayer jingle = MediaPlayer.create(context, R.raw.sfx_sounds_fanfare3);
+        jingle.start();
+        jingle.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                jingle.release();
+            }
+        });
+    }
 
 
     /**
