@@ -1,0 +1,109 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <uk.ac.reading.student.akostarevas.asteroids.GameView
+        android:id="@+id/gamearea"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+    <RelativeLayout
+        android:id="@+id/gameLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <TextView
+            android:id="@+id/score"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:gravity="top"
+            android:text="@string/score_text"
+            android:textColor="#ffffffff"
+            android:textSize="24sp"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/lives"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="10dp"
+            android:gravity="top"
+            android:text="@string/score_lives"
+            android:textColor="#ffffffff"
+            android:textSize="24sp"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/text"
+            android:text="@string/mode_menu"
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:textColor="#ffffffff"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/button_difficulty"
+            android:textColor="#ffffff"
+            android:background="#000000"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="@string/button_difficulty" />
+
+        <Button
+            android:id="@+id/button_scores"
+            android:textColor="#ffffff"
+            android:background="#000000"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dp"
+            android:text="@string/button_scores" />
+
+
+        <Button
+            android:id="@+id/button_help"
+            android:textColor="#ffffff"
+            android:background="#000000"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="110dp"
+            android:text="@string/button_help" />
+
+        <EditText
+            android:id="@+id/score_name"
+            android:visibility="gone"
+            android:textColor="#ffffff"
+            android:background="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/score"
+            android:layout_centerHorizontal="true"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="@string/score_name" />
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/text"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/logo" />
+
+    </RelativeLayout>
+</FrameLayout>
