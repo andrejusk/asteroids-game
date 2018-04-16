@@ -11,6 +11,17 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.lang.*;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Main activity for Asteroids.
@@ -58,7 +69,36 @@ public class GameActivity extends AppCompatActivity {
         gameView.scores.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup(R.layout.popup_score);
+                final View popup = showPopup(R.layout.popup_score);
+                final TextView score = popup.findViewById(R.id.popup_score_text);
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("scores");
+
+                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Map<String, Long> map = (Map<String, Long>) dataSnapshot.getValue();
+
+                        if (map == null) {
+                            score.setText("No high scores yet!");
+                        } else {
+                            StringBuilder scores = new StringBuilder();
+                            for (java.lang.Object o : map.entrySet()) {
+                                Map.Entry pair = (Map.Entry) o;
+                                scores.append(pair.getValue().toString()).append("\n");
+                            }
+                            score.setText(scores.toString());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        final TextView score = findViewById(R.id.popup_score_text);
+                        score.setText((CharSequence) databaseError);
+                    }
+                });
             }
         });
         gameView.guide.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +117,7 @@ public class GameActivity extends AppCompatActivity {
      * Shows popup.
      * @param popup Popup to show.
      */
-    private void showPopup(int popup) {
+    private View showPopup(int popup) {
         /* Get main layout */
         RelativeLayout mainLayout = findViewById(R.id.gameLayout);
 
@@ -86,7 +126,7 @@ public class GameActivity extends AppCompatActivity {
                 getSystemService(LAYOUT_INFLATER_SERVICE);
 
         if (inflater == null) {
-            return;
+            throw new IllegalArgumentException("popup can't be null");
         }
 
         /* Create popup */
@@ -106,6 +146,8 @@ public class GameActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        return popupView;
     }
 
     /**

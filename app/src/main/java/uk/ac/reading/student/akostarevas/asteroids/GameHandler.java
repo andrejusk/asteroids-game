@@ -11,6 +11,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Handles messages from GameThread to GameView.
  */
@@ -41,7 +47,7 @@ class GameHandler extends Handler {
     }
 
     @Override
-    public void handleMessage(Message m) {
+    public void handleMessage(final Message m) {
         if (m.getData().getBoolean("score")) {
             this.scoreView.setVisibility(View.VISIBLE);
             scoreView.setText(m.getData().getString("text"));
@@ -68,7 +74,13 @@ class GameHandler extends Handler {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        System.out.println(v.getText());
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference myRef = database.getReference("scores");
+
+                        Map<String, Long> score = new HashMap<>();
+                        score.put(v.getText().toString(), Long.parseLong(scoreView.getText().toString()));
+
+                        myRef.push().setValue(score);
 
                         /* Close keyboard */
                         InputMethodManager keyboard = (InputMethodManager)
