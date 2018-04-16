@@ -3,6 +3,8 @@ package uk.ac.reading.student.akostarevas.asteroids;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.media.MediaPlayer;
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -35,8 +37,8 @@ public class Game extends GameThread {
     /* Score values */
     private final static long asteroidPoints = 100;
 
-    /* Lives */
-    private int lives;
+    /* Sound thread */
+    private SoundThread soundThread;
 
     /**
      * Set up game.
@@ -59,6 +61,9 @@ public class Game extends GameThread {
         bullet = BitmapFactory.decodeResource(
                 gameView.getContext().getResources(),
                 R.drawable.asteroid);
+
+        soundThread = new SoundThread(context);
+        soundThread.start();
     }
 
     /**
@@ -76,9 +81,6 @@ public class Game extends GameThread {
         /* Create Player and MotionObjects */
         player = new Player(canvasWidth, canvasHeight, playerNormal, playerThrust);
         objects = new ArrayList<>();
-
-        /* Default lives */
-        lives = 3;
     }
 
     @Override
@@ -92,7 +94,7 @@ public class Game extends GameThread {
         super.draw(canvas);
 
         /* Don't draw if waiting */
-        if (super.gameState != STATE.RUNNING) {
+        if (super.gameState == STATE.MENU) {
             return;
         }
 
@@ -104,10 +106,12 @@ public class Game extends GameThread {
             object.draw(canvas);
         }
 
-        /* Overlay controllers */
-        joystick.draw(canvas);
-        thrust.draw(canvas);
-        shoot.draw(canvas);
+        if (super.gameState != STATE.DEAD) {
+            /* Overlay controllers */
+            joystick.draw(canvas);
+            thrust.draw(canvas);
+            shoot.draw(canvas);
+        }
 
     }
 
@@ -123,6 +127,10 @@ public class Game extends GameThread {
     @Override
     protected boolean actionOnTouch(MotionEvent e) {
 
+        if (super.gameState != STATE.RUNNING) {
+            return false;
+        }
+
         int pointerIndex = e.getActionIndex();
         int pointerId = e.getPointerId(pointerIndex);
         int action = e.getActionMasked();
@@ -137,6 +145,7 @@ public class Game extends GameThread {
             if (thrust.isPointer(pointerId)) {
                 player.thrusting = false;
                 thrust.active = false;
+                soundThread.stopEngine = true;
             }
             /* If thrust finger */
             else if (shoot.isPointer(pointerId)) {
@@ -180,6 +189,7 @@ public class Game extends GameThread {
                     player.thrusting = true;
                     thrust.active = true;
                     thrust.pointerId = pointerId;
+                    soundThread.startEngine = true;
                 }
                 /* Shoot button */
                 else if (shoot.isAffected(x, y)) {
@@ -187,6 +197,7 @@ public class Game extends GameThread {
                     shoot.active = true;
                     PlayerBullet bullet = new PlayerBullet(player, this.bullet);
                     objects.add(bullet);
+                    soundThread.playFire = true;
                 }
             }
         }
@@ -237,11 +248,12 @@ public class Game extends GameThread {
             /* If Player hits Asteroid */
             if (object instanceof Asteroid && collides(player, object)) {
                 if (lives > 0) {
-                    lives--;
+                    updateLives(lives - 1);
                     super.setState(STATE.DEAD);
                 } else {
                     super.setState(STATE.FINISH);
                 }
+                soundThread.playDeath = true;
             }
 
             /* If object collides any other object */
@@ -258,6 +270,7 @@ public class Game extends GameThread {
                         objects.set(j, new Asteroid((Asteroid) target, object, false));
                         /* Increment score */
                         super.increaseScore(asteroidPoints);
+                        soundThread.playHit = true;
                     }
                 }
             }
@@ -275,12 +288,24 @@ public class Game extends GameThread {
             }
         }
 
-        /* Create objects */
-        Random random = new Random(Double.doubleToLongBits(Math.random()));
-        if (random.nextFloat() < 0.01) {
-            objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
+        if (difficulty != DIFFICULTY.EASY) {
+            /* Create objects */
+            Random random = new Random(Double.doubleToLongBits(Math.random()));
+            if (random.nextFloat() < 0.01) {
+                objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
+            }
+            if (difficulty == DIFFICULTY.HARD) {
+                /* Create more objects */
+                if (random.nextFloat() < 0.01) {
+                    objects.add(new Asteroid(canvasWidth, canvasHeight, asteroid));
+                }
+            }
         }
 
+    }
+
+    void cleanState() {
+        soundThread.stopEngine = true;
     }
 
     private boolean collides(MotionObject object, MotionObject target) {
@@ -290,7 +315,8 @@ public class Game extends GameThread {
         }
         /* Returns if distance is less than radii */
         return
-                (Math.pow(object.x - target.x, 2) + Math.pow(object.y - target.y, 2))
+                (Math.pow((object.x + object.size / 2) - (target.x + target.size / 2), 2)
+                        + Math.pow((object.y + object.size / 2) - (target.y + target.size / 2), 2))
                 < Math.pow(object.size / 2 + target.size / 2, 2);
     }
 

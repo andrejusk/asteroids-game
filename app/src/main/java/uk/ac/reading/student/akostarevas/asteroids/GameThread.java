@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,9 +30,16 @@ public abstract class GameThread extends Thread {
     enum STATE {
         MENU, PAUSE, RUNNING, DEAD, FINISH
     }
-
     /* Control variable for the gameState of the game (e.g. STATE.WIN) */
     protected STATE gameState;
+
+    /*
+        Different difficulties
+     */
+    enum DIFFICULTY {
+        EASY, MEDIUM, HARD
+    }
+    protected DIFFICULTY difficulty = DIFFICULTY.MEDIUM;
 
     /* Used to ensure appropriate threading */
     static final Integer monitor = 1;
@@ -51,6 +59,9 @@ public abstract class GameThread extends Thread {
     /* Score tracking */
     long score = 0;
 
+    /* Lives */
+    protected int lives = 3;
+
     /* Background */
     private Paint background;
 
@@ -61,7 +72,7 @@ public abstract class GameThread extends Thread {
     private Handler handler;
 
     /* Android Context - this stores almost all we need to know */
-    private Context context;
+    Context context;
 
     public GameThread(GameView gameView) {
         this.gameView = gameView;
@@ -96,10 +107,14 @@ public abstract class GameThread extends Thread {
      */
     public void setup() {
         synchronized (monitor) {
+            /* Save lives/score between lives */
+            if (gameState != STATE.DEAD) {
+                updateScore(0);
+                updateLives(3);
+            }
             setupBeginning();
-            lastUpdate = System.currentTimeMillis() + 100;
+            lastUpdate = System.currentTimeMillis();
             setState(STATE.RUNNING);
-            updateScore(0);
         }
     }
 
@@ -119,6 +134,8 @@ public abstract class GameThread extends Thread {
                     }
                     draw(canvasRun);
                 }
+            } catch (Exception e) {
+                return;
             } finally {
                 if (canvasRun != null) {
                     if (surfaceHolder != null)
@@ -180,6 +197,12 @@ public abstract class GameThread extends Thread {
             }
             if (gameState == STATE.FINISH) {
                 //TODO: Save score, go to STATE.MENU
+                Message msg = handler.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("submit", true);
+                msg.setData(bundle);
+                handler.sendMessage(msg);
+                setState(STATE.MENU);
                 return true;
             }
             if (gameState == STATE.PAUSE) {
@@ -218,11 +241,11 @@ public abstract class GameThread extends Thread {
      * UnPause game.
      */
     public void unPause() {
-        /* Move the real time clock up to now */
-        synchronized (monitor) {
+        if (gameState == STATE.PAUSE) {
+            /* Move the real time clock up to now */
             lastUpdate = System.currentTimeMillis();
+            setState(STATE.RUNNING);
         }
-        setState(STATE.RUNNING);
     }
 
 
@@ -248,53 +271,65 @@ public abstract class GameThread extends Thread {
         synchronized (monitor) {
             this.gameState = state;
 
-            Message msg = handler.obtainMessage();
-            Bundle b = new Bundle();
-
-            b.putInt("viz", View.VISIBLE);
-
-            if (this.gameState == STATE.RUNNING) {
-                b.putString("text", "");
-                b.putBoolean("showAd", false);
-            } else {
-                Resources res = context.getResources();
-                CharSequence str;
-
-                switch (this.gameState) {
-                    case MENU:
-                        str = res.getText(R.string.mode_menu);
-                        break;
-                    case PAUSE:
-                        str = res.getText(R.string.mode_pause);
-                        break;
-                    case DEAD:
-                        str = res.getText(R.string.mode_dead);
-                        break;
-                    case FINISH:
-                        str = res.getText(R.string.mode_finish);
-                        break;
-                    default:
-                        str = "";
-                        break;
-                }
-
-                if (message != null) {
-                    str = message + "\n" + str;
-                }
-
-                b.putString("text", str.toString());
+            cleanState();
+            if (state == STATE.MENU) {
+                playJingle();
             }
 
-            msg.setData(b);
+            Message msg = handler.obtainMessage();
+            Bundle bundle = new Bundle();
+
+            if (this.gameState == STATE.RUNNING) {
+                bundle.putInt("viz", View.GONE);
+                bundle.putInt("buttons", View.GONE);
+                bundle.putString("text", "");
+            } else {
+                bundle.putInt("viz", View.VISIBLE);
+                Resources res = context.getResources();
+                switch (this.gameState) {
+                    case MENU:
+                        bundle.putString("text", res.getText(R.string.mode_menu).toString());
+                        bundle.putInt("buttons", View.VISIBLE);
+                        break;
+                    case PAUSE:
+                        bundle.putString("text", res.getText(R.string.mode_pause).toString());
+                        bundle.putInt("buttons", View.INVISIBLE);
+                        break;
+                    case DEAD:
+                        bundle.putString("text", res.getText(R.string.mode_dead).toString());
+                        bundle.putInt("buttons", View.INVISIBLE);
+                        break;
+                    case FINISH:
+                        bundle.putString("text", res.getText(R.string.mode_finish).toString());
+                        bundle.putInt("buttons", View.INVISIBLE);
+                        break;
+                    default:
+                        bundle.putString("text", "");
+                        break;
+                }
+            }
+            msg.setData(bundle);
             handler.sendMessage(msg);
         }
     }
 
+    abstract void cleanState();
+
+    private void playJingle() {
+        /* Play jingle */
+        final MediaPlayer jingle = MediaPlayer.create(context, R.raw.sfx_sounds_fanfare3);
+        jingle.start();
+        jingle.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                jingle.release();
+            }
+        });
+    }
 
 
     /**
      * Update and send a score to the View.
-     * Would it be better to do this inside this thread writing it manually on the screen?
      */
     private void updateScore(long score) {
         this.score = score;
@@ -304,6 +339,22 @@ public abstract class GameThread extends Thread {
             Bundle b = new Bundle();
             b.putBoolean("score", true);
             b.putString("text", getScoreString().toString());
+            msg.setData(b);
+            handler.sendMessage(msg);
+        }
+    }
+
+    /**
+     * Update and send a lives to the View.
+     */
+    protected void updateLives(int lives) {
+        this.lives = lives;
+
+        synchronized (monitor) {
+            Message msg = handler.obtainMessage();
+            Bundle b = new Bundle();
+            b.putBoolean("lives", true);
+            b.putString("text", String.valueOf(lives));
             msg.setData(b);
             handler.sendMessage(msg);
         }

@@ -2,12 +2,16 @@ package uk.ac.reading.student.akostarevas.asteroids;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -17,7 +21,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     GameHandler handler;
     /* Pointers to the views */
     TextView scoreView;
+    TextView liveView;
     TextView statusView;
+
+    Button scores;
+    Button diff;
+    Button guide;
+
+    EditText name;
+    ImageView logo;
     /* GameThread and communication handler */
     private volatile GameThread thread;
 
@@ -31,7 +43,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void setup() {
         /* Set up a handler for messages from GameThread */
-        handler = new GameHandler(scoreView, statusView);
+        handler = new GameHandler(scoreView, liveView, statusView, scores, diff, guide, name, logo);
     }
 
     /**
@@ -59,7 +71,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setOnTouchListener(new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
             public boolean onTouch(View v, MotionEvent event) {
-                return thread != null && thread.onTouch(event);
+                if (thread == null) {
+                    return false;
+                }
+                if (thread.gameState == GameThread.STATE.MENU) {
+                    playSelect(thread);
+                }
+                return thread.onTouch(event);
             }
         });
 
@@ -73,14 +91,34 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
     }
 
+    static void playSelect(GameThread thread) {
+        playSelect(thread.context);
+    }
+
+    static void playSelect(Context context) {
+        /* Play jingle */
+        final MediaPlayer beep = MediaPlayer.create(context, R.raw.sfx_sounds_blip2);
+        beep.start();
+        beep.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                beep.release();
+            }
+        });
+    }
+
     /**
      * Ensure that we go into pause state if we go out of focus.
      */
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         if (thread != null) {
-            if (!hasWindowFocus)
+            if (!hasWindowFocus) {
                 thread.pause();
+            }
+            else {
+                thread.unPause();
+            }
         }
     }
 
