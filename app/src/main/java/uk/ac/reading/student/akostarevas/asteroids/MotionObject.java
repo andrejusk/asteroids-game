@@ -149,13 +149,13 @@ abstract class MotionObject extends GameObject {
      * @param rotate Rotation to use.
      */
     void draw(Canvas canvas, float rotate) {
-        /* Rotate bullet */
+        /* Rotate MotionObject */
         Matrix matrix = new Matrix();
         matrix.postTranslate(-bitmap.getWidth() / 2, -bitmap.getHeight() / 2);
         matrix.postRotate(180 - rotate);
         matrix.postTranslate(x + (float) (size / 2.0), y + (float) (size / 2.0));
 
-        /* Draw main player */
+        /* Draw MotionObject */
         canvas.drawBitmap(bitmap, matrix, noAA);
     }
 
